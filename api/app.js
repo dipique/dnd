@@ -1,12 +1,13 @@
-var createError = require('http-errors')
-var express = require('express')
-var path = require('path')
-var cookieParser = require('cookie-parser')
-var logger = require('morgan')
-var cors = require('cors')
+const express = require('express')
+const path = require('path')
+const cookieParser = require('cookie-parser')
+const logger = require('morgan')
+const cors = require('cors')
 const { auth } = require('express-oauth2-jwt-bearer')
+const faunadb = require('faunadb')
+require('dotenv').config()
 
-var app = express()
+const app = express()
 
 app.use(cors({
   origin: ['http://localhost:3000'],
@@ -19,13 +20,29 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(
   auth({
-    issuerBaseURL: 'https://dev-n8eqgexp.us.auth0.com/',
-    audience: 'dnd-api'
+    issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
+    audience: process.env.AUTH0_AUDIENCE
   })
 )
 
-app.get('/authorized', function(req, res) {
-  res.send('Secured Resource')
+// fauna setup
+const client = new faunadb.Client({
+  secret: process.env.FUANA_CLIENT_SECRET,
+  domain: process.env.FAUNA_DOMAIN,
+  port: 443,
+  scheme: 'https',
 })
+
+app.get('/authorized', async function(req, res) {
+   const q = faunadb.query
+   const resp = await client.query(
+      q.Map(
+         q.Paginate(q.Documents(q.Collection('people'))),
+         q.Lambda(x => q.Get(x))
+      )
+   )
+   console.log(resp)
+   res.send(resp)
+ })
 
 module.exports = app
