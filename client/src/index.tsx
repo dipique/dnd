@@ -11,8 +11,10 @@ createRoot(
         domain='dev-n8eqgexp.us.auth0.com'
         clientId='ZpWM5PKXKsGg48nhMiVGibGjPb56FX4c'
         redirectUri={window.location.origin}
+        audience='dnd-api'
+        scope='do:all'
     >
-        <App />
+        <App apiUri='http://localhost:8000' />
     </Auth0Provider>
 )
 
