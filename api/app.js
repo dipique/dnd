@@ -1,23 +1,22 @@
-const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const logger = require('morgan')
-const cors = require('cors')
-const { auth } = require('express-oauth2-jwt-bearer')
-const faunadb = require('faunadb')
-require('dotenv').config()
+import express from 'express'
+import path from 'path'
+import cookieParser from 'cookie-parser'
+import morgan from 'morgan'
+import cors from 'cors'
+import { auth } from 'express-oauth2-jwt-bearer'
+import faunadb from 'faunadb'
+import dotenv from 'dotenv'
 
+dotenv.config()
 const app = express()
-
 app.use(cors({
   origin: ['http://localhost:3000'],
   optionsSuccessStatus: 200
 }))
-app.use(logger('dev'))
+app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
 app.use(
   auth({
     issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
@@ -33,7 +32,7 @@ const client = new faunadb.Client({
   scheme: 'https',
 })
 
-app.get('/authorized', async function(req, res) {
+app.get('/authorized', async (req, res) => {
    const q = faunadb.query
    const resp = await client.query(
       q.Map(
@@ -45,4 +44,8 @@ app.get('/authorized', async function(req, res) {
    res.send(resp)
  })
 
-module.exports = app
+ app.get('/upload', async (req, res) => {
+   //https://flaviocopes.com/node-aws-s3-upload-image/
+ })
+
+ export { app }
