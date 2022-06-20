@@ -24,7 +24,7 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
                         audience: 'dnd-api',
                         scope: 'do:all'
                     })
-                    const response = await fetch(`${apiUri}/authorized`, {
+                    const response = await fetch(`${apiUri}/download`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }
