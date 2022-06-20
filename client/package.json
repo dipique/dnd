@@ -24,6 +24,17 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^1.10.1",
+    "@mantine/core": "^4.2.10",
+    "@mantine/dates": "^4.2.10",
+    "@mantine/dropzone": "^4.2.10",
+    "@mantine/form": "^4.2.10",
+    "@mantine/hooks": "^4.2.10",
+    "@mantine/modals": "^4.2.10",
+    "@mantine/next": "^4.2.10",
+    "@mantine/notifications": "^4.2.10",
+    "@mantine/rte": "^4.2.10",
+    "@mantine/spotlight": "^4.2.10",
+    "dayjs": "^1.11.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
