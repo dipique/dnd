@@ -8,6 +8,7 @@ import { LoginButton } from './auth/LoginButton'
 import { LogoutButton } from './auth/LogoutButton'
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
+import { PersonForm } from './forms/PersonForm'
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
     const { user, isAuthenticated, isLoading: authLoading, getAccessTokenSilently } = useAuth0()
@@ -30,6 +31,7 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
             })}
         >
             <Title>Hello React!</Title>
+            <PersonForm />
             <button
                 disabled={authLoading || isLoading}
                 onClick={async () => {
