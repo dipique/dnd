@@ -1,20 +1,43 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 
 import { MantineProvider, AppShell, Title } from '@mantine/core'
 
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
-import { PersonForm } from './forms/PersonForm'
 import { People } from './pages/People'
 import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
+import { SpotlightProvider, SpotlightAction } from '@mantine/spotlight'
+// import { actions, slIconSize } from './SpotlightActions'
+import { Search, Login, Logout } from 'tabler-icons-react'
+import { slIconSize } from './SpotlightActions'
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
-    const { user, isAuthenticated, isLoading: authLoading, getAccessTokenSilently } = useAuth0()
-    const [ isLoading, setLoading ] = useState(false)
+    const { user, isAuthenticated, loginWithRedirect, isLoading } = useAuth0()
     const [ dark, setDark ] = useState(true)
     const [ activePage, setActivePage ] = useState('people')
+
+    const actions: SpotlightAction[] = useMemo(() => [
+        {
+            title: 'Search',
+            description: 'Search',
+            onTrigger: () => console.log('search'),
+            icon: <Search size={slIconSize} />
+        },
+        // {
+        //     title: 'Log out',
+        //     description: 'Log out of this application',
+        //     onTrigger: () => console.log('log out'),
+        //     icon: <Logout size={slIconSize} />
+        // },
+        // {
+        //     title: 'Log in',
+        //     description: 'Log into this application',
+        //     onTrigger: () => console.log('log in'),
+        //     icon: <Login size={slIconSize} />
+        // }
+    ], [])
 
     const ActivePage = () => {
         if (!isAuthenticated)
@@ -34,6 +57,13 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
         withGlobalStyles
         withNormalizeCSS
     >
+        <SpotlightProvider
+            actions={actions}
+            searchIcon={<Search size={slIconSize} />}
+            searchPlaceholder='Search...'
+            nothingFoundMessage='Action not found'
+            highlightQuery
+        >
         <AppShell
             padding="md"
             navbar={<AppNavbar />}
@@ -67,5 +97,6 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
                 Call API
             </button> */}
         </AppShell>
+        </SpotlightProvider>
     </MantineProvider>
 }
