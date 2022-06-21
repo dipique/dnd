@@ -1,19 +1,28 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { FC, useEffect, useState } from 'react'
 
-import { MantineProvider, AppShell, Navbar, Header, Title } from '@mantine/core'
+import { MantineProvider, AppShell, Title } from '@mantine/core'
 
-
-import { LoginButton } from './auth/LoginButton'
-import { LogoutButton } from './auth/LogoutButton'
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
 import { PersonForm } from './forms/PersonForm'
+import { People } from './pages/People'
+import { Places } from './pages/Places'
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
     const { user, isAuthenticated, isLoading: authLoading, getAccessTokenSilently } = useAuth0()
     const [ isLoading, setLoading ] = useState(false)
     const [ dark, setDark ] = useState(true)
+    const [ activePage, setActivePage ] = useState('people')
+
+    const ActivePage = () => {
+        switch(activePage)
+        {
+            case 'people': return <People />
+            case 'places': return <Places />
+            default: return <div></div>
+        }
+    }
 
     useEffect(() => user && console.log(user), [user])
 
@@ -30,8 +39,7 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
         >
-            <Title>Hello React!</Title>
-            <PersonForm />
+            <ActivePage />
             <button
                 disabled={authLoading || isLoading}
                 onClick={async () => {

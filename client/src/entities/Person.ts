@@ -15,3 +15,9 @@ export class Person {
     eyes?: string = ''
     description?: string = ''
 }
+
+export const PersonTypes = {
+    pc: "Player Character",
+    npc: "Non-Player Character",
+    lore: "Lore Character"
+} as const
