@@ -3,6 +3,7 @@ import { FC, useEffect, useMemo, useState } from 'react'
 
 import { MantineProvider, AppShell, Title } from '@mantine/core'
 
+import { createContext } from 'react'
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
 import { People } from './pages/People'
@@ -10,8 +11,17 @@ import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
 import { SpotlightProvider, SpotlightAction } from '@mantine/spotlight'
 // import { actions, slIconSize } from './SpotlightActions'
-import { Search, Login, Logout } from 'tabler-icons-react'
+import { Link, Search } from 'tabler-icons-react'
 import { slIconSize } from './SpotlightActions'
+
+export interface IAppContext {
+    activePage: string
+    setActivePage: (s: string) => void
+    dark: boolean
+    setDark: (b: boolean) => void
+}
+
+export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
     const { user, isAuthenticated, loginWithRedirect, isLoading } = useAuth0()
@@ -20,23 +30,19 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
 
     const actions: SpotlightAction[] = useMemo(() => [
         {
-            title: 'Search',
-            description: 'Search',
-            onTrigger: () => console.log('search'),
-            icon: <Search size={slIconSize} />
+            id: 'people',
+            title: 'Go to People',
+            description: 'Open People page (NPCs, PCs, etc.)',
+            onTrigger: () => setActivePage('people'),
+            icon: <Link size={slIconSize} />
         },
-        // {
-        //     title: 'Log out',
-        //     description: 'Log out of this application',
-        //     onTrigger: () => console.log('log out'),
-        //     icon: <Logout size={slIconSize} />
-        // },
-        // {
-        //     title: 'Log in',
-        //     description: 'Log into this application',
-        //     onTrigger: () => console.log('log in'),
-        //     icon: <Login size={slIconSize} />
-        // }
+        {
+            id: 'places',
+            title: 'Go to Places',
+            description: 'Open Places page',
+            onTrigger: () => setActivePage('places'),
+            icon: <Link size={slIconSize} />
+        },
     ], [])
 
     const ActivePage = () => {
@@ -52,7 +58,10 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
 
     useEffect(() => user && console.log(user), [user])
 
-    return <MantineProvider
+    return <AppContext.Provider value={{
+        activePage, setActivePage,
+        dark, setDark
+    }}><MantineProvider
         theme={dark ? { colorScheme: 'dark'} : undefined}
         withGlobalStyles
         withNormalizeCSS
@@ -99,4 +108,5 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
         </AppShell>
         </SpotlightProvider>
     </MantineProvider>
+    </AppContext.Provider>
 }
