@@ -1,7 +1,7 @@
-import { useAuth0 } from '@auth0/auth0-react'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-react'
+import { FC, useState } from 'react'
 
-import { MantineProvider, AppShell, Title } from '@mantine/core'
+import { AppShell } from '@mantine/core'
 
 import { createContext } from 'react'
 import { AppHeader } from './AppHeader'
@@ -9,41 +9,25 @@ import { AppNavbar } from './AppNavbar'
 import { People } from './pages/People'
 import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
-import { SpotlightProvider, SpotlightAction } from '@mantine/spotlight'
-// import { actions, slIconSize } from './SpotlightActions'
-import { Link, Search } from 'tabler-icons-react'
-import { slIconSize } from './SpotlightActions'
+import { UIWrapper } from './UIWrapper'
 
 export interface IAppContext {
     activePage: string
     setActivePage: (s: string) => void
     dark: boolean
     setDark: (b: boolean) => void
+    apiUri: string
+    isAuthenticated: boolean
+    logout: (o?: LogoutOptions) => void,
+    loginWithRedirect: (o?: RedirectLoginOptions) => void
 }
 
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
-    const { user, isAuthenticated, loginWithRedirect, isLoading } = useAuth0()
+    const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
     const [ dark, setDark ] = useState(true)
     const [ activePage, setActivePage ] = useState('people')
-
-    const actions: SpotlightAction[] = useMemo(() => [
-        {
-            id: 'people',
-            title: 'Go to People',
-            description: 'Open People page (NPCs, PCs, etc.)',
-            onTrigger: () => setActivePage('people'),
-            icon: <Link size={slIconSize} />
-        },
-        {
-            id: 'places',
-            title: 'Go to Places',
-            description: 'Open Places page',
-            onTrigger: () => setActivePage('places'),
-            icon: <Link size={slIconSize} />
-        },
-    ], [])
 
     const ActivePage = () => {
         if (!isAuthenticated)
@@ -56,23 +40,12 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
         }
     }
 
-    useEffect(() => user && console.log(user), [user])
-
     return <AppContext.Provider value={{
         activePage, setActivePage,
-        dark, setDark
-    }}><MantineProvider
-        theme={dark ? { colorScheme: 'dark'} : undefined}
-        withGlobalStyles
-        withNormalizeCSS
-    >
-        <SpotlightProvider
-            actions={actions}
-            searchIcon={<Search size={slIconSize} />}
-            searchPlaceholder='Search...'
-            nothingFoundMessage='Action not found'
-            highlightQuery
-        >
+        dark, setDark,
+        apiUri, isAuthenticated,
+        logout, loginWithRedirect
+    }}><UIWrapper>
         <AppShell
             padding="md"
             navbar={<AppNavbar />}
@@ -106,7 +79,6 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
                 Call API
             </button> */}
         </AppShell>
-        </SpotlightProvider>
-    </MantineProvider>
+    </UIWrapper>
     </AppContext.Provider>
 }

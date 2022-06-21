@@ -1,18 +1,44 @@
-// import { SpotlightAction } from '@mantine/spotlight'
-// import { Login, Logout } from 'tabler-icons-react'
+import { SpotlightAction } from "@mantine/spotlight"
+import { Link, Login, Logout } from "tabler-icons-react"
+import { IAppContext } from "./app"
 
 export const slIconSize = 18
-// export const actions: SpotlightAction[] = [
-//     {
-//         title: 'Log out',
-//         description: 'Log out of this application',
-//         onTrigger: () => console.log('log out'),
-//         icon: <Logout size={slIconSize} />
-//     },
-//     {
-//         title: 'Log in',
-//         description: 'Log into this application',
-//         onTrigger: () => console.log('log in'),
-//         icon: <Login size={slIconSize} />
-//     }
-// ]
+
+export interface ISpotlightAction extends SpotlightAction {
+    hidden: boolean
+}
+
+export const getActions = (ctx: IAppContext): ISpotlightAction[] => [
+    {
+        id: 'people',
+        title: 'Go to People',
+        description: 'Open People page (NPCs, PCs, etc.)',
+        onTrigger: () => ctx.setActivePage('people'),
+        icon: <Link size={slIconSize} />,
+        hidden: !ctx.isAuthenticated || ctx.activePage == 'people'
+    },
+    {
+        id: 'places',
+        title: 'Go to Places',
+        description: 'Open Places page',
+        onTrigger: () => ctx.setActivePage('places'),
+        icon: <Link size={slIconSize} />,
+        hidden: !ctx.isAuthenticated || ctx.activePage == 'places'
+    },
+    {
+        id: 'logout',
+        title: 'Log out',
+        description: 'Log out of this application',
+        onTrigger: () => ctx.logout(),
+        icon: <Logout size={slIconSize} />,
+        hidden: !ctx.isAuthenticated
+    },
+    {
+        id: 'login',
+        title: 'Log in',
+        description: 'Log into this application',
+        onTrigger: ctx.loginWithRedirect,
+        icon: <Login size={slIconSize} />,
+        hidden: ctx.isAuthenticated
+    }
+].filter(a => !a.hidden)
