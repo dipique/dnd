@@ -40,45 +40,22 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
         }
     }
 
-    return <AppContext.Provider value={{
-        activePage, setActivePage,
-        dark, setDark,
-        apiUri, isAuthenticated,
-        logout, loginWithRedirect
-    }}><UIWrapper>
-        <AppShell
-            padding="md"
-            navbar={<AppNavbar />}
-            header={<AppHeader />}
-            styles={(theme) => ({
-                main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-            })}
+    return <>
+        <AppContext.Provider
+            value={{  activePage, setActivePage,
+                      dark, setDark,
+                      apiUri, isAuthenticated,
+                      logout, loginWithRedirect    }}
         >
-            <ActivePage />
-            {/* <button
-                disabled={authLoading || isLoading}
-                onClick={async () => {
-                    setLoading(true)
-
-                    try {
-                        const accessToken = await getAccessTokenSilently({
-                            audience: 'dnd-api',
-                            scope: 'do:all'
-                        })
-                        const response = await fetch(`${apiUri}/download`, {
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`
-                            }
-                        })
-                        console.log('success')
-                    } finally {
-                        setLoading(false)
-                    }
-                }}
-            >
-                Call API
-            </button> */}
-        </AppShell>
-    </UIWrapper>
-    </AppContext.Provider>
+            <UIWrapper>
+                <AppShell
+                    padding="md"
+                    navbar={<AppNavbar />}
+                    header={<AppHeader />}
+                >
+                    <ActivePage />
+                </AppShell>
+            </UIWrapper>
+        </AppContext.Provider>
+    </>
 }
