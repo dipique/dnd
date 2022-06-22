@@ -7,11 +7,12 @@ export const People = () => {
     return <>
         <Title>People</Title>
         <button onClick={() => setShowAddPerson(true)}>Add person</button>
+        <PersonForm />
         <Dialog
             opened={showAddPerson}
             withCloseButton
             onClose={() => setShowAddPerson(false)}
-            size='lg'
+            size='xl'
             radius='md'
         >
             <PersonForm />

@@ -25,9 +25,11 @@ export interface IAppContext {
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
-    const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
+    const { /* isAuthenticated,*/ logout, loginWithRedirect } = useAuth0()
     const [ dark, setDark ] = useState(true)
     const [ activePage, setActivePage ] = useState('people')
+    
+    const isAuthenticated = true  // makes things load quick during development
 
     const ActivePage = () => {
         if (!isAuthenticated)

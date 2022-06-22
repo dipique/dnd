@@ -4,6 +4,7 @@
       "jsx": "react-jsx",
       "module": "esnext",
       "moduleResolution": "node",
+      "experimentalDecorators": true,
       "lib": [
         "dom",
         "esnext"
