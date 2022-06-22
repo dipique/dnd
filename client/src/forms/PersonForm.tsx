@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/hooks'
-import { Box, TextInput, NumberInput, Button, Group, SimpleGrid, Textarea, SegmentedControl } from '@mantine/core';
+import { Box, TextInput, NumberInput, Button, Group, SimpleGrid, Textarea, SegmentedControl, Center } from '@mantine/core';
 
 import { Person } from '../entities'
 import { PersonTypeKey, PersonTypes } from '../entities/Person';
@@ -13,10 +13,10 @@ class FldOpts {
   label?: string
 }
 const PersonFormGrpCfg: { [Key in keyof Person]?: FldOpts | null } = {
-  name:       { placeholder: 'Character Name' },
-  player:     { placeholder: 'Player Name' },
+  name:       { placeholder: 'character Name' },
+  player:     { placeholder: 'player Name' },
   birthplace: null,
-  firstmet:   { label: 'First Met' },
+  firstmet:   { label: 'first met', placeholder: 'context of first meeting' },
   age:        { render: props => <NumberInput {...props} /> },
   gender:     null,
   race:       null,
@@ -27,6 +27,8 @@ const PersonFormGrpCfg: { [Key in keyof Person]?: FldOpts | null } = {
   weight:     null,
   hair:       null,
   eyes:       null,
+  description: { render: props => <Textarea {...props} />},
+  background: { render: props => <Textarea {...props} />},
 }
 
 const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
@@ -55,34 +57,21 @@ export const PersonForm = () => {
 
   return <Box sx={{ maxWidth: 400 }}>
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
-      <SegmentedControl
-        data={Object.entries(PersonTypes).map(([key, pt]) => ({
-          value: key,
-          label: pt.short
-        }))}
-        {...form.getInputProps('type')}
-        onChange={onPersonTypeChange}
-      />
+      <Center>
+        <SegmentedControl
+          size='md'
+          data={Object.entries(PersonTypes).map(([key, pt]) => ({
+            value: key,
+            label: pt.short
+          }))}
+          {...form.getInputProps('type')}
+          onChange={onPersonTypeChange}
+        />
+      </Center>
       <SimpleGrid cols={2} spacing='sm'>
         {pfCfg.map(f => f(form, isCombatant))}
-        {/* <TextInput   label="Name"        {...form.getInputProps('name')} placeholder='Name' />
-        <TextInput   label="Player"      {...form.getInputProps('player')} placeholder='Player name' />
-        <TextInput   label="Birthplace"  {...form.getInputProps('birthplace')} />
-        <TextInput   label="First Met"   {...form.getInputProps('firstmet')} />
-        <NumberInput label="Age"         {...form.getInputProps('age')} />
-        <TextInput   label="Gender"      {...form.getInputProps('gender')} />
-        <TextInput   label="Race"        {...form.getInputProps('race')} />
-        <TextInput   label="Subrace"     {...form.getInputProps('subrace')} />
-        <TextInput   label="Class"       {...form.getInputProps('class')} />
-        <TextInput   label="Subclass"    {...form.getInputProps('subclass')} />
-        <TextInput   label="Height"      {...form.getInputProps('height')} />
-        <TextInput   label="Weight"      {...form.getInputProps('weight')} />
-        <TextInput   label="Hair"        {...form.getInputProps('hair')} />
-        <TextInput   label="Eyes"        {...form.getInputProps('eyes')} /> */}
       </SimpleGrid>
-      <Textarea   label="Background"  {...form.getInputProps('background')} />
-      <Textarea   label="Description" {...form.getInputProps('description')} />
-      <Textarea   label="Notes"       {...form.getInputProps('notes')} />
+      <Textarea   label="notes"       {...form.getInputProps('notes')} />
         
       <Group position="right" mt="md">
         <Button type="submit">Submit</Button>
