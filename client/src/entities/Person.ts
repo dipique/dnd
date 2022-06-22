@@ -15,11 +15,7 @@ export class Person {
     gender?: string = ''
     age?: number
     race?: string = ''
-    subrace?: string = ''
-    height?: string = ''
-    weight?: string = ''
-    hair?: string = ''
-    eyes?: string = ''
+    appearance?: string = ''
     description?: string = ''
     
     notes?: string = ''
@@ -30,6 +26,11 @@ export const PersonTypes = {
         display: 'Non-Player Character',
         short: 'NPC',
         combatant: true,
+    },
+    creature: {
+        display: 'Creature',
+        short: 'Creature',
+        combatant: false
     },
     pc:   {
         display: 'Player Character',

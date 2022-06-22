@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/hooks'
-import { Box, TextInput, NumberInput, Button, Group, SimpleGrid, Textarea, SegmentedControl, Center } from '@mantine/core';
+import { Box, TextInput, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core';
 
 import { Person } from '../entities'
 import { PersonTypeKey, PersonTypes } from '../entities/Person';
@@ -11,32 +11,31 @@ class FldOpts {
   render?: (props: any) => JSX.Element = props => <TextInput {...props} />
   placeholder?: string
   label?: string
+  span?: number = 6 // out of 12
 }
 const PersonFormGrpCfg: { [Key in keyof Person]?: FldOpts | null } = {
-  name:       { placeholder: 'character Name' },
-  player:     { placeholder: 'player Name' },
-  birthplace: null,
-  firstmet:   { label: 'first met', placeholder: 'context of first meeting' },
-  age:        { render: props => <NumberInput {...props} /> },
-  gender:     null,
-  race:       null,
-  subrace:    null,
-  class:      null,
-  subclass:   null,
-  height:     null,
-  weight:     null,
-  hair:       null,
-  eyes:       null,
-  description: { render: props => <Textarea {...props} />},
-  background: { render: props => <Textarea {...props} />},
+  name:        { placeholder: 'character name' },
+  player:      { placeholder: 'player name' },
+  race:        { span: 4 },
+  gender:      { span: 4 },
+  age:         { render: p => <NumberInput {...p} />, span: 4 },
+  class:       null,
+  subclass:    null,
+  firstmet:    { label: 'first met', placeholder: 'context of first meeting' },
+  birthplace:  { label: 'birth place', placeholder: 'or country of origin' },
+  appearance:  { render: p => <Textarea {...p} />, placeholder: 'eyes, skin, hair, tattoos, etc.' },
+  background:  { render: p => <Textarea {...p} />, placeholder: 'who they are, in brief' },
+  description: { render: p => <Textarea {...p} />, label: 'description / notes', span: 12, placeholder: 'additional relevant detail' },
 }
 
 const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
-  let { render, placeholder, label } = { ...(new FldOpts), label: prop, ...cfg }
+  let { render, placeholder, label, span } = { ...(new FldOpts), label: prop, ...cfg }
   const cmbProp = isPropCombatant(prop)
 
-  return (form: UseForm<Person>, combatant: boolean) => (!cmbProp || !combatant)
-    ? render!({ key: prop, label, placeholder, ...form.getInputProps(prop as keyof Person) })
+  return (form: UseForm<Person>, combatant: boolean) => (!cmbProp || combatant)
+    ? <Grid.Col key={`col_${prop}`} span={span}>
+        {render!({ key: prop, label, placeholder, ...form.getInputProps(prop as keyof Person) })}
+      </Grid.Col>
     : undefined
 })
 
@@ -68,11 +67,9 @@ export const PersonForm = () => {
           onChange={onPersonTypeChange}
         />
       </Center>
-      <SimpleGrid cols={2} spacing='sm'>
+      <Grid>
         {pfCfg.map(f => f(form, isCombatant))}
-      </SimpleGrid>
-      <Textarea   label="notes"       {...form.getInputProps('notes')} />
-        
+      </Grid>  
       <Group position="right" mt="md">
         <Button type="submit">Submit</Button>
       </Group>
