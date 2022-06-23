@@ -20,6 +20,11 @@ export class Person {
     description?: string = ''
     
     notes?: string = ''
+
+    constructor(type?: PersonTypeKey) {
+        if (type)
+            this.type = type
+    }
 }
 
 export const PersonTypes = {

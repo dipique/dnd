@@ -33,42 +33,34 @@ const client = new faunadb.Client({
   scheme: 'https',
 })
 
-app.get('/authorized', async (req, res) => {
-   const q = faunadb.query
-   const resp = await client.query(
-      q.Map(
-         q.Paginate(q.Documents(q.Collection('people'))),
-         q.Lambda(x => q.Get(x))
-      )
-   )
-   console.log(resp)
-   res.send(resp)
- })
-
- app.post('/people', async (req, res) => {
+const remoteQuery = async (res, getQry) => {
   const q = faunadb.query
+  const resp = await client.query(getQry(q))
+  res.send(resp.body)
+}
+
+app.get('/authorized', (req, res) =>
+  remoteQuery(res, q =>
+    q.Map(
+      q.Paginate(q.Documents(q.Collection('people'))),
+      q.Lambda(x => q.Get(x))
+)))
+
+app.post('/people', async (req, res) => {
   const { id, ...data } = await req.body
-  console.log(data)
-  const resp = await client.query(
+  await remoteQuery(res, q =>
     q.Create(
       q.Collection('people'),
       { data }
-    )
-  )
-  res.send(resp.body)
- })
+ ))})
 
- app.get('/people', async (req, res) => {
-  const q = faunadb.query
-  const { id, ...data } = req.body
-  const resp = await client.query(
+app.get('/people', async (req, res) => {
+  const { id, ...data } = await req.body
+  await remoteQuery(res, q =>
     q.Update(
       q.Ref(q.Collection('people'), req.body.id),
       { data }
-    )
-  )
-  res.send(resp.body)
- })
+))})
 
  const s3 = new S3({
    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,

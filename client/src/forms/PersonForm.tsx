@@ -7,7 +7,6 @@ import { FC, useState } from 'react'
 import { isPropCombatant } from '../meta/Combatant'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { FldOpts, FormGroupCfg } from './FormGroupCfg'
-import { showNotification } from '@mantine/notifications'
 
 const PersonFormGrpCfg: FormGroupCfg<Person> = {
   name:        { placeholder: 'character name' },
@@ -35,12 +34,15 @@ const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
     : undefined
 })
 
-export const PersonForm: FC<{ person?: Person, savePerson: ((p: Person) => Promise<string>) }> = ({ person, savePerson }) => {
+export const PersonForm: FC<{
+  person?: Person,
+  savePerson: ((p: Person) => Promise<string>)
+}> = ({ person, savePerson }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
   const form = useForm<Person>({
       initialValues: {
-        ...new Person(),
-        ...person
+        ...new Person('pc'),
+        ...person,
     }
   })
 
