@@ -1,12 +1,13 @@
 import { useForm } from '@mantine/hooks'
-import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core';
+import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core'
 
 import { Person } from '../entities'
-import { PersonTypeKey, PersonTypes } from '../entities/Person';
-import { useState } from 'react';
-import { isPropCombatant } from '../meta/Combatant';
-import { UseForm } from '@mantine/hooks/lib/use-form/use-form';
-import { FldOpts, FormGroupCfg } from './FormGroupCfg';
+import { PersonTypeKey, PersonTypes } from '../entities/Person'
+import { FC, useState } from 'react'
+import { isPropCombatant } from '../meta/Combatant'
+import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
+import { FldOpts, FormGroupCfg } from './FormGroupCfg'
+import { showNotification } from '@mantine/notifications'
 
 const PersonFormGrpCfg: FormGroupCfg<Person> = {
   name:        { placeholder: 'character name' },
@@ -34,23 +35,31 @@ const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
     : undefined
 })
 
-export const PersonForm = () => {
+export const PersonForm: FC<{ person?: Person, savePerson: ((p: Person) => Promise<string>) }> = ({ person, savePerson }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
   const form = useForm<Person>({
       initialValues: {
         ...new Person(),
-        name: 'Uszu',
-        type: 'pc'
+        ...person
     }
   })
 
   const onPersonTypeChange = (v: PersonTypeKey) => {
     setIsCombatant(PersonTypes[v].combatant)
+    form.setFieldValue('type', v)
     form.getInputProps('type').onChange(v)
   }
 
+  const validatePerson = (person: Person) => !!person // TODO: validation
+
+  const onSavePerson = async (person: Person) => {
+    if (!validatePerson(person))
+      return
+    const result = await savePerson(person)
+  }
+
   return <Box sx={{ maxWidth: 400 }}>
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form onSubmit={form.onSubmit(onSavePerson)}>
       <Center>
         <SegmentedControl
           size='md'

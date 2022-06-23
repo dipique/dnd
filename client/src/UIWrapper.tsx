@@ -6,6 +6,7 @@ import { Search } from 'tabler-icons-react'
 
 import { getActions, slIconSize } from './SpotlightActions'
 import { AppContext } from './app'
+import { NotificationsProvider } from '@mantine/notifications'
 
 export const UIWrapper = (props: any) => {
     const ctx = useContext(AppContext)
@@ -18,14 +19,16 @@ export const UIWrapper = (props: any) => {
             withGlobalStyles
             withNormalizeCSS
         >
-            <SpotlightProvider
-                actions={actions}
-                searchIcon={<Search size={slIconSize} />}
-                searchPlaceholder='Search...'
-                nothingFoundMessage='Action not found'
-                highlightQuery
-                children={props.children}
-            />
+            <NotificationsProvider>
+                <SpotlightProvider
+                    actions={actions}
+                    searchIcon={<Search size={slIconSize} />}
+                    searchPlaceholder='Search...'
+                    nothingFoundMessage='Action not found'
+                    highlightQuery
+                    children={props.children}
+                />
+            </NotificationsProvider>
         </MantineProvider>
     </>
 }

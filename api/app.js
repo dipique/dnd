@@ -1,5 +1,4 @@
 import express from 'express'
-import path from 'path'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import cors from 'cors'
@@ -44,6 +43,31 @@ app.get('/authorized', async (req, res) => {
    )
    console.log(resp)
    res.send(resp)
+ })
+
+ app.post('/people', async (req, res) => {
+  const q = faunadb.query
+  const { id, ...data } = await req.body
+  console.log(data)
+  const resp = await client.query(
+    q.Create(
+      q.Collection('people'),
+      { data }
+    )
+  )
+  res.send(resp.body)
+ })
+
+ app.get('/people', async (req, res) => {
+  const q = faunadb.query
+  const { id, ...data } = req.body
+  const resp = await client.query(
+    q.Update(
+      q.Ref(q.Collection('people'), req.body.id),
+      { data }
+    )
+  )
+  res.send(resp.body)
  })
 
  const s3 = new S3({
