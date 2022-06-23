@@ -1,19 +1,14 @@
 import { useForm } from '@mantine/hooks'
-import { Box, TextInput, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core';
+import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core';
 
 import { Person } from '../entities'
 import { PersonTypeKey, PersonTypes } from '../entities/Person';
 import { useState } from 'react';
 import { isPropCombatant } from '../meta/Combatant';
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form';
+import { FldOpts, FormGroupCfg } from './FormGroupCfg';
 
-class FldOpts {
-  render?: (props: any) => JSX.Element = props => <TextInput {...props} />
-  placeholder?: string
-  label?: string
-  span?: number = 6 // out of 12
-}
-const PersonFormGrpCfg: { [Key in keyof Person]?: FldOpts | null } = {
+const PersonFormGrpCfg: FormGroupCfg<Person> = {
   name:        { placeholder: 'character name' },
   player:      { placeholder: 'player name' },
   race:        { span: 4 },
