@@ -3,13 +3,13 @@ import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Gr
 
 import { Person } from '../entities'
 import { PersonTypeKey, PersonTypes } from '../entities/Person'
-import { FC, useState } from 'react'
+import { FC, MutableRefObject, useEffect, useRef, useState } from 'react'
 import { isPropCombatant } from '../meta/Combatant'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { FldOpts, FormGroupCfg } from './FormGroupCfg'
 
 const PersonFormGrpCfg: FormGroupCfg<Person> = {
-  name:        { placeholder: 'character name' },
+  name:        { placeholder: 'character name', initFocus: true },
   player:      { placeholder: 'player name' },
   race:        { span: 4 },
   gender:      { span: 4 },
@@ -32,16 +32,22 @@ const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
   let { render, placeholder, label, span } = { ...(new FldOpts), label: prop, ...cfg }
   const cmbProp = isPropCombatant(prop)
 
-  return (form: UseForm<Person>, combatant: boolean) => (!cmbProp || combatant)
+  return (form: UseForm<Person>, combatant: boolean, ref?: MutableRefObject<any>) => (!cmbProp || combatant)
     ? <Grid.Col key={`col_${prop}`} span={span}>
-        {render!({ key: prop, label, placeholder, ...form.getInputProps(prop as keyof Person) })}
+        {render!({
+          key: prop,
+          label,
+          placeholder,
+          ...form.getInputProps(prop as keyof Person),
+          ref: (cfg?.initFocus ? ref : undefined)
+        })}
       </Grid.Col>
     : undefined
 })
 
 export const PersonForm: FC<{
   person?: Person,
-  savePerson: ((p: Person) => Promise<void>),
+  savePerson: ((p: Person) => Promise<void>)
 }> = ({ person, savePerson }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
   const [ saving, setSaving ] = useState(false)
@@ -67,6 +73,13 @@ export const PersonForm: FC<{
     const result = await savePerson(person)
   }
 
+  const initFocusRef = useRef<any>()
+
+  useEffect(() => {
+    if (initFocusRef.current)
+      initFocusRef.current.focus()
+  }, [])
+
   return <Box sx={{ maxWidth: 400 }}>
     <form onSubmit={form.onSubmit(onSavePerson)}>
       <Center>
@@ -81,7 +94,7 @@ export const PersonForm: FC<{
         />
       </Center>
       <Grid>
-        {pfCfg.map(f => f(form, isCombatant))}
+        {pfCfg.map(f => f(form, isCombatant, initFocusRef))}
       </Grid>  
       <Group position="right" mt="md">
         <Button loading={saving} type="submit">Submit</Button>
