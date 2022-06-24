@@ -1,9 +1,9 @@
-import { useForm, useHotkeys } from '@mantine/hooks'
+import { HotkeyItem, useForm, useHotkeys } from '@mantine/hooks'
 import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core'
 
 import { Person } from '../entities'
 import { PersonTypeKey, PersonTypes } from '../entities/Person'
-import { FC, MutableRefObject, useEffect, useRef, useState } from 'react'
+import { FC, KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { isPropCombatant } from '../meta/Combatant'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { FldOpts, FormGroupCfg } from './FormGroupCfg'
@@ -39,11 +39,14 @@ const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
           label,
           placeholder,
           ...form.getInputProps(prop as keyof Person),
-          ref: (cfg?.initFocus ? ref : undefined)
+          ref: (cfg?.initFocus ? ref : undefined),
         })}
       </Grid.Col>
     : undefined
 })
+
+const inputBreakoutKeyCombo = 'ctrl+alt+'
+const toBreakoutHotkey = (key: string) => `${inputBreakoutKeyCombo}${key[0].toLowerCase()}`
 
 export const PersonForm: FC<{
   person?: Person,
@@ -58,9 +61,11 @@ export const PersonForm: FC<{
     }
   })
 
-  useHotkeys(Object.entries(PersonTypes).map(([key]) => [
-    `ctrl+alt+${key[0]}`, () => onPersonTypeChange(key as PersonTypeKey)
-  ]))
+  const hks = useMemo(() => Object.entries(PersonTypes).map(([key]) => [
+    toBreakoutHotkey(key), () => onPersonTypeChange(key as PersonTypeKey)
+  ] as HotkeyItem), [])
+
+  useHotkeys(hks)
 
   const onPersonTypeChange = (v: PersonTypeKey) => {
     setIsCombatant(PersonTypes[v].combatant)
@@ -84,8 +89,24 @@ export const PersonForm: FC<{
       initFocusRef.current.focus()
   }, [])
 
+  const handleFormHotkeys = useMemo(() => (e: KeyboardEvent<HTMLFormElement>) => {
+    const tgt = e.target as any
+    // do we not need to override in this case?
+    if (tgt.nodeName !== 'INPUT' ||
+        !e.ctrlKey || !e.altKey || e.key.length !== 1)
+        return
+    
+    // does this match a current hotkey?
+    const bohk = toBreakoutHotkey(e.key)
+    const hk = hks.find(hk => hk[0] === bohk)
+    if (!hk) return
+
+    // run the event
+    hk[1](e as any)
+  }, [])
+
   return <Box sx={{ maxWidth: 400 }}>
-    <form onSubmit={form.onSubmit(onSavePerson)}>
+    <form onKeyDown={handleFormHotkeys} onSubmit={form.onSubmit(onSavePerson)}>
       <Center>
         <SegmentedControl
           size='md'
