@@ -1,9 +1,9 @@
-import { combatant } from "../meta/Combatant"
+import { combatant } from '../meta/Combatant'
 
 export class Person {
     id?: string
     name: string = ''
-    type: string = ''
+    type: PersonTypeKey = DefaultPersonType
     img?: string = ''
     player?: string = ''
     birthplace?: string = ''
@@ -51,24 +51,4 @@ export const PersonTypes = {
 } as const
 
 export type PersonTypeKey = keyof typeof PersonTypes
-
-export class FaunaCollectionItem<T> {
-    ref: any
-    ts: number = 0
-    data: T = {} as T
-
-    static withId<T>(item: FaunaCollectionItem<T>): T {
-        return {
-            ...item.data,
-            id: item.ts,
-        } as T
-    }
-}
-
-export class FaunaCollection<T> {
-    data: FaunaCollectionItem<T>[] = []
-
-    static getItems<T>(col: FaunaCollection<T>): T[] {
-        return col.data.map(FaunaCollectionItem.withId)
-    }
-}
+export const DefaultPersonType: PersonTypeKey = 'pc'

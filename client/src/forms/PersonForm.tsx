@@ -36,7 +36,7 @@ const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
 
 export const PersonForm: FC<{
   person?: Person,
-  savePerson: ((p: Person) => Promise<string>)
+  savePerson: ((p: Person) => Promise<void>),
 }> = ({ person, savePerson }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
   const form = useForm<Person>({

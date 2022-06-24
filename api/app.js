@@ -69,9 +69,10 @@ app.post('/people', async (req, res) => {
 
 app.patch('/people', async (req, res) => {
   const { id, ...data } = await req.body
+  console.log(id)
   await remoteQuery(res, q =>
     q.Update(
-      q.Ref(q.Collection('people'), req.body.id),
+      q.Ref(q.Collection('people'), id),
       { data }
 ))})
 
