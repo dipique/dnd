@@ -8,12 +8,21 @@ import { Person } from '../entities'
 import { FaunaCollection, FaunaItem } from '../db/Faunadb'
 import { PersonForm } from '../forms/PersonForm'
 import { PersonTable } from '../forms/PersonTable'
+import { useHotkeys } from '@mantine/hooks'
 
 export const People = () => {
     const [ showEditDlg, setShowEditDlg ] = useState(false)
     const { getAccessTokenSilently } = useAuth0()
     const ctx = useContext(AppContext)
     const [ personId, setPersonId ] = useState('')
+
+    const hk = useHotkeys([
+        ['c', () => {
+            if (showEditDlg) return
+            setShowEditDlg(true)
+            setPersonId('')
+        }]
+    ])
 
     const qc = useQueryClient()
     const savePerson = async (person: Person) => {
