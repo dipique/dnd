@@ -1,4 +1,4 @@
-import { useForm } from '@mantine/hooks'
+import { useForm, useHotkeys } from '@mantine/hooks'
 import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core'
 
 import { Person } from '../entities'
@@ -58,6 +58,10 @@ export const PersonForm: FC<{
     }
   })
 
+  useHotkeys(Object.entries(PersonTypes).map(([key]) => [
+    `ctrl+alt+${key[0]}`, () => onPersonTypeChange(key as PersonTypeKey)
+  ]))
+
   const onPersonTypeChange = (v: PersonTypeKey) => {
     setIsCombatant(PersonTypes[v].combatant)
     form.setFieldValue('type', v)
@@ -95,7 +99,7 @@ export const PersonForm: FC<{
       </Center>
       <Grid>
         {pfCfg.map(f => f(form, isCombatant, initFocusRef))}
-      </Grid>  
+      </Grid>
       <Group position="right" mt="md">
         <Button loading={saving} type="submit">Submit</Button>
       </Group>
