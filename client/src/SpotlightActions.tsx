@@ -1,6 +1,6 @@
-import { SpotlightAction } from "@mantine/spotlight"
-import { Link, Login, Logout } from "tabler-icons-react"
-import { IAppContext } from "./app"
+import { SpotlightAction } from '@mantine/spotlight'
+import { Link, Login, Logout } from 'tabler-icons-react'
+import { IAppContext } from './app'
 
 export const slIconSize = 18
 

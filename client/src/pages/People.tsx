@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { Dialog, Loader, Title } from '@mantine/core'
+import { Box, Dialog, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useContext, useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
@@ -41,7 +41,7 @@ export const People = () => {
             console.log(err)
             showNotification({
                 title: 'Error',
-                message: 'Create person failed'
+                message: `${person.id ? 'Update' : 'Create'} person failed`
             })
         }
     }
@@ -95,6 +95,31 @@ export const People = () => {
         }
     }
 
+    const deletePerson = async (id: string) => {
+        if (!id) return
+
+        try {
+            const accessToken = await getAccessTokenSilently({
+                audience: 'dnd-api',
+                scope: 'do:all'
+            })
+            const response = await fetch(`${ctx.apiUri}/people?id=${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${accessToken}` }
+            })
+            const result = await response.json()
+            qc.invalidateQueries('people')
+            return result
+        } catch (err) {
+            console.log(err)
+            showNotification({
+                title: 'Error',
+                message: 'Failed to delete person'
+            })
+            throw err
+        }
+    }
+
     const { data: people, status: peopleStatus } = useQuery('people', getPeople)
     // const { data: person, status: personStatus } = useQuery('person', () => getPerson(personId))
 
@@ -112,10 +137,12 @@ export const People = () => {
             <PersonForm key={personId} savePerson={savePerson} person={people?.find(p => p.id === personId)} />
         </Dialog>}
         {peopleStatus == 'success'
-            ? <PersonTable people={people || []} onPersonClick={id => {
-                setPersonId(id)
-                setShowEditDlg(true)
-              }} />
+            ? <Box sx={{ maxWidth: 600 }}>
+                <PersonTable people={people || []} deletePerson={deletePerson} onPersonClick={id => {
+                    setPersonId(id)
+                    setShowEditDlg(true)
+                }} />
+              </Box>
             : <Loader />}
     </>
 }

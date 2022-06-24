@@ -1,7 +1,7 @@
 import { combatant } from '../meta/Combatant'
 
 export class Person {
-    id?: string
+    id: string = ''
     name: string = ''
     type: PersonTypeKey = DefaultPersonType
     img?: string = ''

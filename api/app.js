@@ -62,6 +62,13 @@ app.get('/people', async (req, res) =>
             : getPeopleQry(q)
 ))
 
+app.delete('/people', async (req, res) =>
+  await remoteQuery(
+    res, q => q.Delete(
+      q.Ref(q.Collection('people'), req.query.id)
+    )
+))
+
 app.post('/people', async (req, res) => {
   const { id, ...data } = await req.body
   await remoteQuery(res, q => newPersonQry(q, data))

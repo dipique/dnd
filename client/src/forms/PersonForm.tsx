@@ -20,7 +20,12 @@ const PersonFormGrpCfg: FormGroupCfg<Person> = {
   birthplace:  { label: 'birth place', placeholder: 'or country of origin' },
   appearance:  { render: p => <Textarea {...p} />, placeholder: 'eyes, skin, hair, tattoos, etc.' },
   background:  { render: p => <Textarea {...p} />, placeholder: 'who they are, in brief' },
-  description: { render: p => <Textarea {...p} />, label: 'description / notes', span: 12, placeholder: 'additional relevant detail' },
+  description: {
+    render: p => <Textarea {...p} />,
+    label: 'description / notes',
+    span: 12,
+    placeholder: 'additional relevant detail'
+  },
 }
 
 const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
@@ -39,6 +44,7 @@ export const PersonForm: FC<{
   savePerson: ((p: Person) => Promise<void>),
 }> = ({ person, savePerson }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
+  const [ saving, setSaving ] = useState(false)
   const form = useForm<Person>({
       initialValues: {
         ...new Person('pc'),
@@ -57,6 +63,7 @@ export const PersonForm: FC<{
   const onSavePerson = async (person: Person) => {
     if (!validatePerson(person))
       return
+    setSaving(true)
     const result = await savePerson(person)
   }
 
@@ -77,7 +84,7 @@ export const PersonForm: FC<{
         {pfCfg.map(f => f(form, isCombatant))}
       </Grid>  
       <Group position="right" mt="md">
-        <Button type="submit">Submit</Button>
+        <Button loading={saving} type="submit">Submit</Button>
       </Group>
     </form>
   </Box>
