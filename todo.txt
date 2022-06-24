@@ -1,0 +1,20 @@
+
+
+
+Todo
+    Person validation
+    Abstract out api calls/auth
+    Typescript api (just start from scratch)
+
+
+
+
+
+
+
+
+Try
+    typed object.entries
+        https://dev.to/harry0000/a-bit-convenient-typescript-type-definitions-for-objectentries-d6g
+        https://stackoverflow.com/questions/60141960/typescript-key-value-relation-preserving-object-entries-type
+    Can the pages be abstracted? There shoul be a lot of similar code
