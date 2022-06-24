@@ -10,6 +10,7 @@ import { People } from './pages/People'
 import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 export interface IAppContext {
     activePage: string
@@ -22,6 +23,7 @@ export interface IAppContext {
     loginWithRedirect: (o?: RedirectLoginOptions) => void
 }
 
+const queryClient = new QueryClient()
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
@@ -49,6 +51,7 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
                       apiUri, isAuthenticated,
                       logout, loginWithRedirect    }}
         >
+            <QueryClientProvider client={queryClient}>
             <UIWrapper>
                 <AppShell
                     padding="md"
@@ -58,6 +61,7 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
                     <ActivePage />
                 </AppShell>
             </UIWrapper>
+            </QueryClientProvider>
         </AppContext.Provider>
     </>
 }

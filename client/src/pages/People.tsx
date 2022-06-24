@@ -1,10 +1,13 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { Dialog, Title } from '@mantine/core'
+import { Dialog, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useContext, useState } from 'react'
+import { useQuery } from 'react-query'
 import { AppContext } from '../app'
 import { Person } from '../entities'
+import { FaunaCollection } from '../entities/Person'
 import { PersonForm } from '../forms/PersonForm'
+import { PersonTable } from '../forms/PersonTable'
 
 export const People = () => {
     const [ showAddPerson, setShowAddPerson ] = useState(false)
@@ -44,6 +47,31 @@ export const People = () => {
         }
     }
 
+    const getPeople = async () => {
+        try {
+            const accessToken = await getAccessTokenSilently({
+                audience: 'dnd-api',
+                scope: 'do:all'
+            })
+            const response = await fetch(`${ctx.apiUri}/people`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            const result = await response.json() as FaunaCollection<Person>
+            return FaunaCollection.getItems(result)
+        } catch (err) {
+            console.log(err)
+            showNotification({
+                title: 'Error',
+                message: 'Failed to fetch people'
+            })
+        }
+    }
+
+    const { data: people, status } = useQuery("people", getPeople)
+
     return <>
         <Title>People</Title>
         <button onClick={() => setShowAddPerson(true)}>Add person</button>
@@ -56,5 +84,8 @@ export const People = () => {
         >
             <PersonForm savePerson={savePerson} />
         </Dialog>
+        {status == 'success'
+            ? <PersonTable people={people || []} />
+            : <Loader />}
     </>
 }

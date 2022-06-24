@@ -20,6 +20,11 @@ export class Person {
     description?: string = ''
     
     notes?: string = ''
+
+    constructor(type?: PersonTypeKey) {
+        if (type)
+            this.type = type
+    }
 }
 
 export const PersonTypes = {
@@ -46,3 +51,24 @@ export const PersonTypes = {
 } as const
 
 export type PersonTypeKey = keyof typeof PersonTypes
+
+export class FaunaCollectionItem<T> {
+    ref: any
+    ts: number = 0
+    data: T = {} as T
+
+    static withId<T>(item: FaunaCollectionItem<T>): T {
+        return {
+            ...item.data,
+            id: item.ts,
+        } as T
+    }
+}
+
+export class FaunaCollection<T> {
+    data: FaunaCollectionItem<T>[] = []
+
+    static getItems<T>(col: FaunaCollection<T>): T[] {
+        return col.data.map(FaunaCollectionItem.withId)
+    }
+}
