@@ -143,7 +143,12 @@ export const People = () => {
             size='xl'
             radius='md'
         >
-            <PersonForm key={personId} savePerson={savePerson} person={people?.find(p => p.id === personId)} />
+            <PersonForm
+                key={personId}
+                savePerson={savePerson}
+                person={people?.find(p => p.id === personId)}
+                deletePerson={deletePerson}
+            />
         </Dialog>}
         {peopleStatus == 'success'
             ? <Box sx={{ maxWidth: 600 }}>

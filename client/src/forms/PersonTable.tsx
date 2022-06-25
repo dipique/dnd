@@ -12,7 +12,6 @@ export const PersonTable: FC<{
     const ths = <tr>
           <th>Type</th>
           <th>Name</th>
-          <th>Gender</th>
           <th>Race</th>
           <th></th>
         </tr>
@@ -21,7 +20,6 @@ export const PersonTable: FC<{
         <tr key={person.id}>
             <td>{PersonTypes[person.type].short}</td>
             <td><Anchor onClick={() => onPersonClick?.(person.id)}>{person.name}</Anchor></td>
-            <td>{person.gender}</td>
             <td>{person.race}</td>
             <td width={32}>
                 <ActionIcon onClick={() => deletePerson?.(person.id)} color='red'>

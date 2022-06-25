@@ -9,51 +9,53 @@ import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { FldOpts, FormGroupCfg } from './FormGroupCfg'
 
 const PersonFormGrpCfg: FormGroupCfg<Person> = {
-  name:        { placeholder: 'character name', initFocus: true },
-  player:      { placeholder: 'player name' },
-  race:        { span: 4 },
-  gender:      { span: 4 },
-  age:         { render: p => <NumberInput {...p} />, span: 4 },
-  class:       null,
-  subclass:    null,
-  firstmet:    { label: 'first met', placeholder: 'context of first meeting' },
-  birthplace:  { label: 'birth place', placeholder: 'or country of origin' },
-  appearance:  { render: p => <Textarea {...p} />, placeholder: 'eyes, skin, hair, tattoos, etc.' },
-  background:  { render: p => <Textarea {...p} />, placeholder: 'who they are, in brief' },
-  description: {
-    render: p => <Textarea {...p} />,
-    label: 'description / notes',
-    span: 12,
-    placeholder: 'additional relevant detail'
-  },
+   name:        { placeholder: 'character name', initFocus: true },
+   player:      { placeholder: 'player name' },
+   race:        { span: 4 },
+   gender:      { span: 4 },
+   age:         { render: p => <NumberInput {...p} />, span: 4 },
+   class:       null,
+   subclass:    null,
+   firstmet:    { label: 'first met', placeholder: 'context of first meeting' },
+   birthplace:  { label: 'birth place', placeholder: 'or country of origin' },
+   appearance:  { render: p => <Textarea {...p} />, placeholder: 'eyes, skin, hair, tattoos, etc.' },
+   background:  { render: p => <Textarea {...p} />, placeholder: 'who they are, in brief' },
+   description: {
+      render: p => <Textarea {...p} />,
+      label: 'description / notes',
+      span: 12,
+      placeholder: 'additional relevant detail'
+   },
 }
 
 const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
-  let { render, placeholder, label, span } = { ...(new FldOpts), label: prop, ...cfg }
-  const cmbProp = isPropCombatant(prop)
+   let { render, placeholder, label, span } = { ...(new FldOpts), label: prop, ...cfg }
+   const cmbProp = isPropCombatant(prop)
 
-  return (form: UseForm<Person>, combatant: boolean, ref?: MutableRefObject<any>) => (!cmbProp || combatant)
-    ? <Grid.Col key={`col_${prop}`} span={span}>
-        {render!({
-          key: prop,
-          label,
-          placeholder,
-          ...form.getInputProps(prop as keyof Person),
-          ref: (cfg?.initFocus ? ref : undefined),
-        })}
-      </Grid.Col>
-    : undefined
+   return (form: UseForm<Person>, combatant: boolean, ref?: MutableRefObject<any>) => (!cmbProp || combatant)
+      ? <Grid.Col key={`col_${prop}`} span={span}>
+           {render!({
+               key: prop,
+               label,
+               placeholder,
+               ...form.getInputProps(prop as keyof Person),
+               ref: (cfg?.initFocus ? ref : undefined),
+           })}
+        </Grid.Col>
+      : undefined
 })
 
 const inputBreakoutKeyCombo = 'ctrl+alt+'
 const toBreakoutHotkey = (key: string) => `${inputBreakoutKeyCombo}${key[0].toLowerCase()}`
 
 export const PersonForm: FC<{
-  person?: Person,
-  savePerson: ((p: Person) => Promise<void>)
-}> = ({ person, savePerson }) => {
+   person?: Person,
+   savePerson: ((p: Person) => Promise<void>)
+   deletePerson?: ((id: string) => Promise<void>)
+}> = ({ person, savePerson, deletePerson }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
   const [ saving, setSaving ] = useState(false)
+  const [ formType ] = useState<'create' | 'update'>(person?.id ? 'update' : 'create')
   const form = useForm<Person>({
       initialValues: {
         ...new Person('pc'),
@@ -121,7 +123,19 @@ export const PersonForm: FC<{
       <Grid>
         {pfCfg.map(f => f(form, isCombatant, initFocusRef))}
       </Grid>
-      <Group position="right" mt="md">
+      <Group position="apart" mt="md">
+        <Button
+          disabled={formType === 'create'}
+          color='red'
+          loading={saving}
+          type="submit"
+          onClick={(e: any) => {
+            e.preventDefault()
+            deletePerson?.(person?.id!)
+          }}
+        >
+          Delete
+        </Button>
         <Button loading={saving} type="submit">Submit</Button>
       </Group>
     </form>
