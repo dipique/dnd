@@ -1,19 +1,17 @@
-import { useAuth0 } from '@auth0/auth0-react'
 import { Box, Dialog, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
-import { AppContext } from '../app'
 import { Person } from '../entities'
 import { PersonForm } from '../forms/PersonForm'
 import { PersonTable } from '../forms/PersonTable'
 import { useHotkeys } from '@mantine/hooks'
+import { usePersonDb } from '../db/Faunadb'
 
 export const People = () => {
     const [ showEditDlg, setShowEditDlg ] = useState(false)
-    const { getAccessTokenSilently } = useAuth0()
-    const ctx = useContext(AppContext)
     const [ personId, setPersonId ] = useState('')
+    const { save, get, getAll, remove } = usePersonDb()
 
     const hk = useHotkeys([
         ['c', () => {
@@ -26,21 +24,7 @@ export const People = () => {
     const qc = useQueryClient()
     const savePerson = async (person: Person) => {
         try {
-            const accessToken = await getAccessTokenSilently({
-                audience: 'dnd-api',
-                scope: 'do:all'
-            })
-            console.log(person)
-            const idParam = person.id ? `?id=${person.id}` : ''
-            const response = await fetch(`${ctx.apiUri}/people${idParam}`, {
-                method: person.id ? 'PATCH' : 'POST',
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(person)
-            })
-            await response.json()
+            await save(person)
             setShowEditDlg(false)
             showNotification({
                 title: 'Success!',
@@ -58,18 +42,7 @@ export const People = () => {
 
     const getPeople = async () => {
         try {
-            const accessToken = await getAccessTokenSilently({
-                audience: 'dnd-api',
-                scope: 'do:all'
-            })
-            const response = await fetch(`${ctx.apiUri}/people`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
-            const result = await response.json() as Person[]
-            return result
+            return await getAll()
         } catch (err) {
             console.log(err)
             showNotification({
@@ -81,20 +54,8 @@ export const People = () => {
     }
 
     const getPerson = async (id: string) => {
-        if (!id)
-            return new Person()
-
         try {
-            const accessToken = await getAccessTokenSilently({
-                audience: 'dnd-api',
-                scope: 'do:all'
-            })
-            const response = await fetch(`${ctx.apiUri}/people?id=${id}`, {
-                method: 'GET',
-                headers: { Authorization: `Bearer ${accessToken}` }
-            })
-            const result = await response.json() as Person
-            return result
+            return await get(id)
         } catch (err) {
             console.log(err)
             showNotification({
@@ -109,18 +70,9 @@ export const People = () => {
         if (!id) return
 
         try {
-            const accessToken = await getAccessTokenSilently({
-                audience: 'dnd-api',
-                scope: 'do:all'
-            })
-            const response = await fetch(`${ctx.apiUri}/people?id=${id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${accessToken}` }
-            })
-            const result = await response.json()
+            await remove(id)
             qc.invalidateQueries('people')
             setShowEditDlg(false)
-            return result
         } catch (err) {
             console.log(err)
             showNotification({
