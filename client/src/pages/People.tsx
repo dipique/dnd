@@ -31,7 +31,9 @@ export const People = () => {
                 audience: 'dnd-api',
                 scope: 'do:all'
             })
-            const response = await fetch(`${ctx.apiUri}/people`, {
+            console.log(person)
+            const idParam = person.id ? `?id=${person.id}` : ''
+            const response = await fetch(`${ctx.apiUri}/people${idParam}`, {
                 method: person.id ? 'PATCH' : 'POST',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -118,6 +120,7 @@ export const People = () => {
             })
             const result = await response.json()
             qc.invalidateQueries('people')
+            setShowEditDlg(false)
             return result
         } catch (err) {
             console.log(err)
