@@ -5,7 +5,6 @@ import { useContext, useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { AppContext } from '../app'
 import { Person } from '../entities'
-import { FaunaCollection, FaunaItem } from '../db/Faunadb'
 import { PersonForm } from '../forms/PersonForm'
 import { PersonTable } from '../forms/PersonTable'
 import { useHotkeys } from '@mantine/hooks'
@@ -41,7 +40,7 @@ export const People = () => {
                 },
                 body: JSON.stringify(person)
             })
-            const result = await response.json() as FaunaItem<Person>
+            await response.json()
             setShowEditDlg(false)
             showNotification({
                 title: 'Success!',
@@ -69,8 +68,8 @@ export const People = () => {
                     Authorization: `Bearer ${accessToken}`
                 }
             })
-            const result = await response.json() as FaunaCollection<Person>
-            return FaunaCollection.getItems(result)
+            const result = await response.json() as Person[]
+            return result
         } catch (err) {
             console.log(err)
             showNotification({
@@ -94,8 +93,8 @@ export const People = () => {
                 method: 'GET',
                 headers: { Authorization: `Bearer ${accessToken}` }
             })
-            const result = await response.json() as FaunaItem<Person>
-            return FaunaItem.withId(result)
+            const result = await response.json() as Person
+            return result
         } catch (err) {
             console.log(err)
             showNotification({
@@ -137,7 +136,10 @@ export const People = () => {
 
     return <>
         <Title>People</Title>
-        <button onClick={() => setShowEditDlg(true)}>Add person</button>
+        <button onClick={() => {
+            setPersonId('')
+            setShowEditDlg(true)
+        }}>Add person</button>
         {showEditDlg &&
         <Dialog
             opened={showEditDlg}

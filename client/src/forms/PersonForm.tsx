@@ -128,7 +128,7 @@ export const PersonForm: FC<{
           disabled={formType === 'create'}
           color='red'
           loading={saving}
-          type="submit"
+          type="button"
           onClick={(e: any) => {
             e.preventDefault()
             deletePerson?.(person?.id!)
