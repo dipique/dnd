@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Dialog, Loader, Title } from '@mantine/core'
+import { ActionIcon, Box, Dialog, Group, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
@@ -92,10 +92,6 @@ export const People = () => {
 
     return <>
         <Title>People</Title>
-        <ActionIcon disabled={peopleStatus != 'success'} onClick={() => {
-            setPersonId('')
-            setShowEditDlg(true)
-        }}><SquarePlus color='green' /></ActionIcon>
         {showEditDlg &&
         <Dialog
             opened={showEditDlg}
@@ -114,6 +110,14 @@ export const People = () => {
         </Dialog>}
         {peopleStatus == 'success'
             ? <Box sx={{ maxWidth: 600 }}>
+                <Group position='right'>
+                    <ActionIcon size='lg' disabled={peopleStatus != 'success'} onClick={() => {
+                        setPersonId('')
+                        setShowEditDlg(true)
+                    }}>
+                        <SquarePlus width={32} height={32} color='green' />
+                    </ActionIcon>
+                </Group>
                 <PersonTable people={people || []} deletePerson={deletePerson} onPersonClick={id => {
                     setPersonId(id)
                     setShowEditDlg(true)
