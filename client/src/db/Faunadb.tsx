@@ -1,11 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useContext, useMemo } from 'react'
-import { AppContext } from '../app'
+import { useMemo } from 'react'
 import { Person } from '../entities'
+
+export const apiUri = 'http://localhost:8000'
 
 export const usePersonDb = () => {
     const { getAccessTokenSilently } = useAuth0()
-    const { apiUri } = useContext(AppContext)
     const getToken = useMemo(() => async () => await getAccessTokenSilently({
         audience: 'dnd-api',
         scope: 'do:all'

@@ -15,7 +15,7 @@ export const UIWrapper = (props: any) => {
 
     return <>
         <MantineProvider
-            theme={ctx.dark ? { colorScheme: 'dark'} : undefined}
+            theme={{ colorScheme: 'dark'}}
             withGlobalStyles
             withNormalizeCSS
         >

@@ -15,9 +15,6 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 export interface IAppContext {
     activePage: string
     setActivePage: (s: string) => void
-    dark: boolean
-    setDark: (b: boolean) => void
-    apiUri: string
     isAuthenticated: boolean
     logout: (o?: LogoutOptions) => void,
     loginWithRedirect: (o?: RedirectLoginOptions) => void
@@ -26,9 +23,8 @@ export interface IAppContext {
 const queryClient = new QueryClient()
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
-export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
+export const App = () => {
     const { /* isAuthenticated,*/ logout, loginWithRedirect } = useAuth0()
-    const [ dark, setDark ] = useState(true)
     const [ activePage, setActivePage ] = useState('people')
     
     const isAuthenticated = true  // makes things load quick during development
@@ -47,8 +43,7 @@ export const App: FC<{ apiUri: string }> = ({ apiUri }) => {
     return <>
         <AppContext.Provider
             value={{  activePage, setActivePage,
-                      dark, setDark,
-                      apiUri, isAuthenticated,
+                      isAuthenticated,
                       logout, loginWithRedirect    }}
         >
             <QueryClientProvider client={queryClient}>

@@ -1,4 +1,3 @@
-import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { App } from './app'
@@ -14,7 +13,7 @@ createRoot(
         audience='dnd-api'
         scope='do:all'
     >
-        <App apiUri='http://localhost:8000' />
+        <App />
     </Auth0Provider>
 )
 
