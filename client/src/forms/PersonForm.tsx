@@ -52,7 +52,8 @@ export const PersonForm: FC<{
    person?: Person,
    savePerson: ((p: Person) => Promise<void>)
    deletePerson?: ((id: string) => Promise<void>)
-}> = ({ person, savePerson, deletePerson }) => {
+   closeForm: () => void
+}> = ({ person, savePerson, deletePerson, closeForm }) => {
   const [ isCombatant, setIsCombatant ] = useState(true)
   const [ saving, setSaving ] = useState(false)
   const [ formType ] = useState<'create' | 'update'>(person?.id ? 'update' : 'create')
@@ -63,9 +64,12 @@ export const PersonForm: FC<{
     }
   })
 
-  const hks = useMemo(() => Object.entries(PersonTypes).map(([key]) => [
-    toBreakoutHotkey(key), () => onPersonTypeChange(key as PersonTypeKey)
-  ] as HotkeyItem), [])
+  const hks = useMemo(() => [
+    ...Object.entries(PersonTypes).map(([key]) => [
+      toBreakoutHotkey(key), () => onPersonTypeChange(key as PersonTypeKey)
+    ]),
+    ['Escape', closeForm]
+  ] as HotkeyItem[], [])
 
   useHotkeys(hks)
 
@@ -92,14 +96,20 @@ export const PersonForm: FC<{
   }, [])
 
   const handleFormHotkeys = useMemo(() => (e: KeyboardEvent<HTMLFormElement>) => {
+    
     const tgt = e.target as any
     // do we not need to override in this case?
-    if (tgt.nodeName !== 'INPUT' ||
-        !e.ctrlKey || !e.altKey || e.key.length !== 1)
+    if (tgt.nodeName === 'INPUT') {
+      if (e.key === 'Escape') {
+        closeForm()
         return
+      } else if (!(e.ctrlKey && e.altKey && e.key.length === 1))
+        return
+    }
     
     // does this match a current hotkey?
     const bohk = toBreakoutHotkey(e.key)
+    console.log(bohk)
     const hk = hks.find(hk => hk[0] === bohk)
     if (!hk) return
 

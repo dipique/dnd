@@ -1,4 +1,4 @@
-import { Box, Dialog, Loader, Title } from '@mantine/core'
+import { ActionIcon, Box, Dialog, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
@@ -7,18 +7,22 @@ import { PersonForm } from '../forms/PersonForm'
 import { PersonTable } from '../forms/PersonTable'
 import { useHotkeys } from '@mantine/hooks'
 import { usePersonDb } from '../db/Faunadb'
+import { SquarePlus } from 'tabler-icons-react'
 
 export const People = () => {
     const [ showEditDlg, setShowEditDlg ] = useState(false)
     const [ personId, setPersonId ] = useState('')
-    const { save, get, getAll, remove } = usePersonDb()
+    const { save, getAll, remove } = usePersonDb()
+
+    const closeForm = () => setShowEditDlg(false)
+    const showForm = () => setShowEditDlg(true)
 
     const hk = useHotkeys([
         ['c', () => {
             if (showEditDlg) return
-            setShowEditDlg(true)
+            showForm()
             setPersonId('')
-        }]
+        }],
     ])
 
     const qc = useQueryClient()
@@ -53,18 +57,18 @@ export const People = () => {
         }
     }
 
-    const getPerson = async (id: string) => {
-        try {
-            return await get(id)
-        } catch (err) {
-            console.log(err)
-            showNotification({
-                title: 'Error',
-                message: 'Failed to fetch person'
-            })
-            throw err
-        }
-    }
+    // const getPerson = async (id: string) => {
+    //     try {
+    //         return await get(id)
+    //     } catch (err) {
+    //         console.log(err)
+    //         showNotification({
+    //             title: 'Error',
+    //             message: 'Failed to fetch person'
+    //         })
+    //         throw err
+    //     }
+    // }
 
     const deletePerson = async (id: string) => {
         if (!id) return
@@ -88,10 +92,10 @@ export const People = () => {
 
     return <>
         <Title>People</Title>
-        <button onClick={() => {
+        <ActionIcon disabled={peopleStatus != 'success'} onClick={() => {
             setPersonId('')
             setShowEditDlg(true)
-        }}>Add person</button>
+        }}><SquarePlus color='green' /></ActionIcon>
         {showEditDlg &&
         <Dialog
             opened={showEditDlg}
@@ -105,6 +109,7 @@ export const People = () => {
                 savePerson={savePerson}
                 person={people?.find(p => p.id === personId)}
                 deletePerson={deletePerson}
+                closeForm={closeForm}
             />
         </Dialog>}
         {peopleStatus == 'success'
