@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Dialog, Group, Loader, Title } from '@mantine/core'
+import { ActionIcon, Box, Dialog, Group, Loader, SegmentedControl, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
@@ -8,11 +8,14 @@ import { PersonTable } from '../forms/PersonTable'
 import { useHotkeys } from '@mantine/hooks'
 import { usePersonDb } from '../db/Faunadb'
 import { SquarePlus } from 'tabler-icons-react'
+import { PersonTypeKey, PersonTypes } from '../entities/Person'
 
 export const People = () => {
     const [ showEditDlg, setShowEditDlg ] = useState(false)
     const [ personId, setPersonId ] = useState('')
     const { save, getAll, remove } = usePersonDb()
+
+    const [ personTypeFilter, setPersonTypeFilter ] = useState<PersonTypeKey | ''>('')
 
     const closeForm = () => setShowEditDlg(false)
     const showForm = () => setShowEditDlg(true)
@@ -111,6 +114,17 @@ export const People = () => {
         {peopleStatus == 'success'
             ? <Box sx={{ maxWidth: 600 }}>
                 <Group position='right'>
+                <SegmentedControl
+                    size='md'
+                    data={[
+                        { value: '', label: 'All' },
+                        ...Object.entries(PersonTypes).map(([key, pt]) => ({
+                            value: key,
+                            label: pt.short
+                        }))
+                    ]}
+                    onChange={(v: PersonTypeKey | '') => setPersonTypeFilter(v)}
+                />
                     <ActionIcon size='lg' disabled={peopleStatus != 'success'} onClick={() => {
                         setPersonId('')
                         setShowEditDlg(true)
@@ -118,10 +132,14 @@ export const People = () => {
                         <SquarePlus width={32} height={32} color='green' />
                     </ActionIcon>
                 </Group>
-                <PersonTable people={people || []} deletePerson={deletePerson} onPersonClick={id => {
-                    setPersonId(id)
-                    setShowEditDlg(true)
-                }} />
+                <PersonTable
+                    people={people?.filter(p => !personTypeFilter || p.type === personTypeFilter) || []}
+                    deletePerson={deletePerson}
+                    onPersonClick={id => {
+                        setPersonId(id)
+                        setShowEditDlg(true)
+                    }}
+                />
               </Box>
             : <Loader />}
     </>
