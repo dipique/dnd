@@ -8,7 +8,8 @@ import { ItemForm } from '../pages/AppPage'
 import { Place, PlaceTypeKey, PlaceTypes } from '../entities/Place'
 
 const PlaceFormGrpCfg: FormGroupCfg<Place> = {
-   name:        { placeholder: 'character name', initFocus: true },
+   name:        { placeholder: 'location name', initFocus: true },
+   location:    { placeholder: 'i.e. city where vendor is located', span: 8 },
    appearance:  { render: p => <Textarea {...p} /> },
    description: {
       render: p => <Textarea {...p} />,

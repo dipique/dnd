@@ -2,6 +2,7 @@ export class Place {
     id: string = ''
     name: string = ''
     type: PlaceTypeKey = DefaultPlaceType
+    location?: string
     img?: string = ''
     appearance?: string = ''
     description?: string = ''

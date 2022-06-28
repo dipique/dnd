@@ -1,5 +1,5 @@
 import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-react'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 
 import { AppShell } from '@mantine/core'
 
@@ -10,7 +10,7 @@ import { People } from './pages/People'
 import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { DbWrapper } from './DbWrapper'
 
 export interface IAppContext {
     activePage: string
@@ -20,7 +20,7 @@ export interface IAppContext {
     loginWithRedirect: (o?: RedirectLoginOptions) => void
 }
 
-const queryClient = new QueryClient()
+
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App = () => {
@@ -36,7 +36,7 @@ export const App = () => {
         {
             case 'people': return <People />
             case 'places': return <Places />
-            default: return <div></div>
+            default: return <div>Invalid page</div>
         }
     }
 
@@ -46,17 +46,17 @@ export const App = () => {
                       isAuthenticated,
                       logout, loginWithRedirect    }}
         >
-            <QueryClientProvider client={queryClient}>
-            <UIWrapper>
-                <AppShell
-                    padding="md"
-                    navbar={<AppNavbar />}
-                    header={<AppHeader />}
-                >
-                    <ActivePage />
-                </AppShell>
-            </UIWrapper>
-            </QueryClientProvider>
+            <DbWrapper>
+                <UIWrapper>
+                    <AppShell
+                        padding="md"
+                        navbar={<AppNavbar />}
+                        header={<AppHeader />}
+                    >
+                        <ActivePage />
+                    </AppShell>
+                </UIWrapper>
+            </DbWrapper>
         </AppContext.Provider>
     </>
 }

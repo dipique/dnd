@@ -111,7 +111,7 @@ export const AppPage = <T extends IItem>({
         }
     }
 
-    const { data: items, status: itemsStatus } = useQuery(strings.collectionName, getItems)
+    const { data: items, status: itemsStatus, isFetching } = useQuery(strings.collectionName, getItems)
 
     const { registerActions, removeActions } = useSpotlight()
     useEffect(() => {
@@ -147,7 +147,7 @@ export const AppPage = <T extends IItem>({
             ? <Box sx={{ maxWidth: 600 }}>
                 <Group position='right'>
                     {renderFilters({ filters, setFilters })}
-                    <ActionIcon size='lg' disabled={itemsStatus != 'success'} onClick={() => {
+                    <ActionIcon size='lg' disabled={itemsStatus != 'success' || isFetching} onClick={() => {
                         setItemId('')
                         setShowDialog(true)
                     }}>
