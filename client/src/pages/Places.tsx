@@ -1,10 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react'
 import { Title } from '@mantine/core'
 import { useContext, useState } from 'react'
 import { AppContext } from '../app'
 
 export const Places = () => {
-    const { getAccessTokenSilently } = useAuth0()
     const [ loading, setLoading ] = useState(false)
     const ctx = useContext(AppContext)
     return <>

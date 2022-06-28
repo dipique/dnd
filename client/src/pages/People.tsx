@@ -1,14 +1,15 @@
 import { ActionIcon, Box, Dialog, Group, Loader, SegmentedControl, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { Person } from '../entities'
 import { PersonForm } from '../forms/PersonForm'
 import { PersonTable } from '../forms/PersonTable'
 import { useHotkeys } from '@mantine/hooks'
 import { usePersonDb } from '../db/Faunadb'
-import { SquarePlus } from 'tabler-icons-react'
+import { MoodBoy, SquarePlus } from 'tabler-icons-react'
 import { PersonTypeKey, PersonTypes } from '../entities/Person'
+import { useSpotlight } from '@mantine/spotlight'
 
 export const People = () => {
     const [ showEditDlg, setShowEditDlg ] = useState(false)
@@ -91,7 +92,24 @@ export const People = () => {
     }
 
     const { data: people, status: peopleStatus } = useQuery('people', getPeople)
-    // const { data: person, status: personStatus } = useQuery('person', () => getPerson(personId))
+
+    const { registerActions, removeActions } = useSpotlight()
+    useEffect(() => {
+        if (!people?.length) return
+
+        const actions = people.map(p => ({
+            id: `${p.type}_${p.name}`,
+            title: `${PersonTypes[p.type].short}: ${p.name}`,
+            description: 'View details for this person',
+            onTrigger: () => {
+                setPersonId(p.id)
+                showForm()
+            },
+            icon: <MoodBoy />,
+        }))
+        registerActions(actions)
+        return () => removeActions(actions.map(p => p.id))
+    }, [ people ])
 
     return <>
         <Title>People</Title>
