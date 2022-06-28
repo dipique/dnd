@@ -1,4 +1,4 @@
-import { ActionIcon, Center, createStyles, Navbar, Title } from '@mantine/core'
+import { ActionIcon, Center, Navbar, Title } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
 import { Location, MoodBoy } from 'tabler-icons-react'
 import { AppContext } from './app'

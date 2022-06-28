@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 dotenv.config()
 import { router as rtPeople } from './routes/people'
+import { router as rtPlaces } from './routes/places'
 
 const app = express()
 
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 
 // register routes
 app.use('/', rtPeople)
+app.use('/', rtPlaces)
 
 // error handling
 app.use((req, res, next) => {

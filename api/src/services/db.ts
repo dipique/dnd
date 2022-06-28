@@ -91,17 +91,14 @@ export class DB {
    }
 
    getAll() {
-      console.log('getAll')
       return getAll(this.collection)
    }
 
    getById(id: string) {
-      console.log('getById')
       return getById(this.collection, id)
    }
 
    get(id?: string) {
-      console.log('get')
       return id ? getById(this.collection, id) : getAll(this.collection)
    }
 
@@ -114,7 +111,6 @@ export class DB {
    }
 
    update(data: IDbItem, id: string) {
-      console.log('update', id)
       return update(this.collection, data, id)
    }
 }

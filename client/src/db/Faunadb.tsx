@@ -1,17 +1,20 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useMemo } from 'react'
 import { Person } from '../entities'
+import { Place } from '../entities/Place'
 
 export const apiUri = 'http://localhost:8000'
 
-export interface IDbActions<T> {
-    save: (person: T) => Promise<T>
+export interface IItem { id: string, name: string }
+
+export interface IDbActions<T extends IItem> {
+    save: (item: T) => Promise<T>
     get: (id: string) => Promise<T>
     getAll: () => Promise<T[]>
     remove: (id: string) => Promise<void>
 }
 
-export const usePersonDb = () => {
+const useItemDb = <T extends IItem>(colName: string, createNew: () => T) => {
     const { getAccessTokenSilently } = useAuth0()
     const getToken = useMemo(() => async () => await getAccessTokenSilently({
         audience: 'dnd-api',
@@ -19,42 +22,45 @@ export const usePersonDb = () => {
     }), [])
 
     return {
-        save: async (person: Person) => {
-            const idParam = person.id ? `?id=${person.id}` : ''
-            const response = await fetch(`${apiUri}/people${idParam}`, {
-                method: person.id ? 'PATCH' : 'POST',
+        save: async (item: T) => {
+            const idParam = item.id ? `?id=${item.id}` : ''
+            const response = await fetch(`${apiUri}/${colName}${idParam}`, {
+                method: item.id ? 'PATCH' : 'POST',
                 headers: {
                     Authorization: `Bearer ${await getToken()}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(person)
+                body: JSON.stringify(item)
             })
-            return await response.json() as Person
+            return await response.json() as T
         },
         getAll: async () => {
-            const response = await fetch(`${apiUri}/people`, {
+            const response = await fetch(`${apiUri}/${colName}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${await getToken()}`
                 }
             })
-            return await response.json() as Person[]
+            return (await response.json() || []) as T[]
         },
         get: async (id?: string) => {
             if (!id)
-                return new Person()
+                return createNew()
 
-            const response = await fetch(`${apiUri}/people?id=${id}`, {
+            const response = await fetch(`${apiUri}/${colName}?id=${id}`, {
                 method: 'GET',
                 headers: { Authorization: `Bearer ${await getToken()}` }
             })
-            return await response.json() as Person
+            return await response.json() as T
         },
         remove: async (id: string) => {
-            await fetch(`${apiUri}/people?id=${id}`, {
+            await fetch(`${apiUri}/${colName}?id=${id}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${await getToken()}` }
             })
         }
-    } as IDbActions<Person>
+    } as IDbActions<T>
 }
+
+export const usePersonDb = () => useItemDb<Person>('people', () => new Person())
+export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())

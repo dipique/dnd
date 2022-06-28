@@ -1,34 +1,27 @@
-import { Title } from '@mantine/core'
-import { useContext, useState } from 'react'
-import { AppContext } from '../app'
+import { Location } from 'tabler-icons-react'
+import { usePlaceDb } from '../db/Faunadb'
+import { Place, PlaceTypes } from '../entities/Place'
+import { PlaceFilters } from '../forms/PlaceFilters'
+import { PlaceForm } from '../forms/PlaceForm'
+import { PlaceTable } from '../forms/PlaceTable'
+import { AppPage, ItemFiltersProps, ItemFormProps, ItemTableProps } from './AppPage'
 
-export const Places = () => {
-    const [ loading, setLoading ] = useState(false)
-    const ctx = useContext(AppContext)
-    return <>
-        <Title>Places</Title>
-        <button
-            disabled={!ctx.isAuthenticated || loading}
-            onClick={async () => {
-                setLoading(true)
-
-                // try {
-                //     const accessToken = await getAccessTokenSilently({
-                //         audience: 'dnd-api',
-                //         scope: 'do:all'
-                //     })
-                //     const response = await fetch(`${ctx.apiUri}/download`, {
-                //         headers: {
-                //             Authorization: `Bearer ${accessToken}`
-                //         }
-                //     })
-                //     console.log('success')
-                // } finally {
-                //     setLoading(false)
-                // }
-            }}
-        >
-            Call API
-        </button>
-    </>
-}
+export const Places = () =>
+    <AppPage<Place>
+        useDbHook={usePlaceDb}
+        renderFilters={(props: ItemFiltersProps<Place>) => <PlaceFilters {...props} />}
+        renderTable={(props: ItemTableProps<Place>) => <PlaceTable {...props} />}
+        renderForm={(props: ItemFormProps<Place>) => <PlaceForm {...props} />}
+        strings={{
+            pageTitle: 'Places',
+            itemSingular: 'place',
+            itemPlural: 'places',
+            collectionName: 'places',
+        }}
+        spotlightFns={{
+            getId: (p: Place) => `${p.type}_${p.name}`,
+            getTitle: (p: Place) => `${PlaceTypes[p.type].short}: ${p.name}`,
+            icon: <Location />
+        }}
+        applyFilter={(p: Place, filter: any) => !filter?.type || p.type === filter.type}
+    />
