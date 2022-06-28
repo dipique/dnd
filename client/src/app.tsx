@@ -20,7 +20,6 @@ export interface IAppContext {
     loginWithRedirect: (o?: RedirectLoginOptions) => void
 }
 
-
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App = () => {
@@ -46,8 +45,8 @@ export const App = () => {
                       isAuthenticated,
                       logout, loginWithRedirect    }}
         >
-            <DbWrapper>
-                <UIWrapper>
+            <UIWrapper>
+                <DbWrapper>
                     <AppShell
                         padding="md"
                         navbar={<AppNavbar />}
@@ -55,8 +54,8 @@ export const App = () => {
                     >
                         <ActivePage />
                     </AppShell>
-                </UIWrapper>
-            </DbWrapper>
+                </DbWrapper>
+            </UIWrapper>
         </AppContext.Provider>
     </>
 }

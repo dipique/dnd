@@ -3,9 +3,10 @@ import { showNotification } from '@mantine/notifications'
 import { FC, useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { useHotkeys } from '@mantine/hooks'
-import { IDbActions, IItem } from '../db/Faunadb'
+import { IItem } from '../db/Faunadb'
 import { SquarePlus } from 'tabler-icons-react'
 import { useSpotlight } from '@mantine/spotlight'
+import { ICollection } from '../DbWrapper'
 
 export type ItemFormProps<T extends IItem> = {
     item: T | undefined
@@ -32,19 +33,16 @@ export type ItemFiltersProps<T extends IItem> = {
 export type ItemFilters<T extends IItem> = FC<ItemFiltersProps<T>>
 
 interface ItemPageProps<T extends IItem> {
-    useDbHook: () => IDbActions<T>
+    collection: ICollection<T>
     renderFilters?: ItemFilters<T>
     renderTable: ItemTable<T>
     renderForm: ItemForm<T>
-    strings: { pageTitle: string, itemSingular: string, itemPlural: string, collectionName: string }
-    spotlightFns: { getId: (item: T) => string, getTitle: (item: T) => string, icon: JSX.Element }
     applyFilter: (item: T, filter: any) => boolean
 }
 
 export const AppPage = <T extends IItem>({
-    useDbHook, strings,
-    renderFilters, renderForm, renderTable,
-    spotlightFns, applyFilter
+    collection: { name, singular, useDbHook, spotlightFns, items, updateCache },
+    renderFilters, applyFilter, renderForm, renderTable
 } : ItemPageProps<T>) => {
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
@@ -69,26 +67,28 @@ export const AppPage = <T extends IItem>({
             setShowDialog(false)
             showNotification({
                 title: 'Success!',
-                message: `${item.id ? 'Update' : 'Create'} ${strings.itemSingular} succeeded`
+                message: `${item.id ? 'Update' : 'Create'} ${singular} succeeded`
             })
-            qc.invalidateQueries(strings.collectionName)
+            qc.invalidateQueries(name)
         } catch (err) {
             console.log(err)
             showNotification({
                 title: 'Error',
-                message: `${item.id ? 'Update' : 'Create'} ${strings.itemSingular} failed`
+                message: `${item.id ? 'Update' : 'Create'} ${singular} failed`
             })
         }
     }
 
     const getItems = async () => {
         try {
+            const items = await getAll()
+            updateCache(items)
             return await getAll()
         } catch (err) {
             console.log(err)
             showNotification({
                 title: 'Error',
-                message: `Failed to fetch ${strings.itemSingular}`
+                message: `Failed to fetch ${singular}`
             })
             return []
         }
@@ -99,19 +99,19 @@ export const AppPage = <T extends IItem>({
 
         try {
             await remove(id)
-            qc.invalidateQueries(strings.collectionName)
+            qc.invalidateQueries(name)
             setShowDialog(false)
         } catch (err) {
             console.log(err)
             showNotification({
                 title: 'Error',
-                message: `Failed to delete ${strings.itemSingular}`
+                message: `Failed to delete ${singular}`
             })
             throw err
         }
     }
 
-    const { data: items, status: itemsStatus, isFetching } = useQuery(strings.collectionName, getItems)
+    const { data, status, isFetching } = useQuery(name, getItems)
 
     const { registerActions, removeActions } = useSpotlight()
     useEffect(() => {
@@ -120,7 +120,7 @@ export const AppPage = <T extends IItem>({
         const actions = items.map(p => ({
             id: spotlightFns.getId(p),
             title: spotlightFns.getTitle(p),
-            description: `View details for this ${strings.itemSingular}`,
+            description: `View details for this ${singular}`,
             onTrigger: () => {
                 setItemId(p.id)
                 showForm()
@@ -132,7 +132,7 @@ export const AppPage = <T extends IItem>({
     }, [ items ])
 
     return <>
-        <Title>{strings.pageTitle}</Title>
+        <Title>{name}</Title>
         {showDialog &&
         <Dialog
             opened={showDialog}
@@ -141,13 +141,13 @@ export const AppPage = <T extends IItem>({
             size='xl'
             radius='md'
         >
-            {renderForm({ saveItem, deleteItem, closeForm, item: items?.find(p => p.id === itemId)})}
+            {renderForm({ saveItem, deleteItem, closeForm, item: data?.find(p => p.id === itemId)})}
         </Dialog>}
-        {itemsStatus == 'success' && renderFilters
+        {status == 'success' && renderFilters
             ? <Box sx={{ maxWidth: 600 }}>
                 <Group position='right'>
                     {renderFilters({ filters, setFilters })}
-                    <ActionIcon size='lg' disabled={itemsStatus != 'success' || isFetching} onClick={() => {
+                    <ActionIcon size='lg' disabled={status != 'success' || isFetching} onClick={() => {
                         setItemId('')
                         setShowDialog(true)
                     }}>
@@ -155,7 +155,7 @@ export const AppPage = <T extends IItem>({
                     </ActionIcon>
                 </Group>
                 {renderTable({
-                    items: (filters ? items?.filter(i => applyFilter(i, filters)) : items) || [],
+                    items: (filters ? data?.filter(i => applyFilter(i, filters)) : data) || [],
                     deleteItem,
                     onItemClick: (id: string) => {
                         setItemId(id)
