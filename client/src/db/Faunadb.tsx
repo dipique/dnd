@@ -4,6 +4,13 @@ import { Person } from '../entities'
 
 export const apiUri = 'http://localhost:8000'
 
+export interface IDbActions<T> {
+    save: (person: T) => Promise<T>
+    get: (id: string) => Promise<T>
+    getAll: () => Promise<T[]>
+    remove: (id: string) => Promise<void>
+}
+
 export const usePersonDb = () => {
     const { getAccessTokenSilently } = useAuth0()
     const getToken = useMemo(() => async () => await getAccessTokenSilently({
@@ -37,10 +44,6 @@ export const usePersonDb = () => {
             if (!id)
                 return new Person()
 
-            const accessToken = await getAccessTokenSilently({
-                audience: 'dnd-api',
-                scope: 'do:all'
-            })
             const response = await fetch(`${apiUri}/people?id=${id}`, {
                 method: 'GET',
                 headers: { Authorization: `Bearer ${await getToken()}` }
@@ -53,5 +56,5 @@ export const usePersonDb = () => {
                 headers: { Authorization: `Bearer ${await getToken()}` }
             })
         }
-    }
+    } as IDbActions<Person>
 }
