@@ -3,8 +3,9 @@ import { Place } from '../entities/Place'
 import { PlaceFilters } from '../forms/PlaceFilters'
 import { PlaceForm } from '../forms/PlaceForm'
 import { PlaceTable } from '../forms/PlaceTable'
-import { AppPage, ItemFiltersProps, ItemFormProps, ItemTableProps } from './AppPage'
+import { AppPage, ItemFiltersProps, ItemTableProps } from './AppPage'
 import { DbContext } from '../DbWrapper'
+import { ItemFormProps } from '../forms/ItemForm'
 
 export const Places = () => {
     const { placesCol } = useContext(DbContext)

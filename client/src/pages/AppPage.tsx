@@ -7,15 +7,7 @@ import { IItem } from '../db/Faunadb'
 import { SquarePlus } from 'tabler-icons-react'
 import { useSpotlight } from '@mantine/spotlight'
 import { ICollection } from '../DbWrapper'
-
-export type ItemFormProps<T extends IItem> = {
-    item: T | undefined
-    saveItem: (item: T) => Promise<void>,
-    deleteItem: (id: string) => Promise<void>,
-    closeForm: () => void,
-}
-
-export type ItemForm<T extends IItem> = FC<ItemFormProps<T>>
+import { ItemFormProps } from '../forms/ItemForm'
 
 export type ItemTableProps<T extends IItem> = {
     items: T[],
@@ -36,14 +28,15 @@ interface ItemPageProps<T extends IItem> {
     collection: ICollection<T>
     renderFilters?: ItemFilters<T>
     renderTable: ItemTable<T>
-    renderForm: ItemForm<T>
+    renderForm: FC<ItemFormProps<T>>
     applyFilter: (item: T, filter: any) => boolean
 }
 
 export const AppPage = <T extends IItem>({
-    collection: { name, singular, useDbHook, spotlightFns, items, updateCache },
+    collection,
     renderFilters, applyFilter, renderForm, renderTable
 } : ItemPageProps<T>) => {
+    const { name, singular, useDbHook, spotlightFns, items, updateCache } = collection
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
     const { save, getAll, remove } = useDbHook()
@@ -141,7 +134,7 @@ export const AppPage = <T extends IItem>({
             size='xl'
             radius='md'
         >
-            {renderForm({ saveItem, deleteItem, closeForm, item: data?.find(p => p.id === itemId)})}
+            {renderForm({ col: collection, saveItem, deleteItem, closeForm, item: data?.find(p => p.id === itemId)})}
         </Dialog>}
         {status == 'success' && renderFilters
             ? <Box sx={{ maxWidth: 600 }}>

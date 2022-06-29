@@ -2,9 +2,10 @@ import { useContext } from 'react'
 import { Person } from '../entities'
 import { PersonForm } from '../forms/PersonForm'
 import { PersonTable } from '../forms/PersonTable'
-import { AppPage, ItemFiltersProps, ItemFormProps, ItemTableProps } from './AppPage'
+import { AppPage, ItemFiltersProps, ItemTableProps } from './AppPage'
 import { PersonFilters } from '../forms/PersonFilters'
 import { DbContext } from '../DbWrapper'
+import { ItemFormProps } from '../forms/ItemForm'
 
 export const People = () =>
     <AppPage<Person>

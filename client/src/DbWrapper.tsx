@@ -1,10 +1,13 @@
 import { createContext, useMemo, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Person, Place } from './entities'
-import { IDbActions, IItem, usePersonDb, usePlaceDb } from './db/Faunadb'
+import { IDbActions, IItem, ItemTypes, usePersonDb, usePlaceDb } from './db/Faunadb'
 import { PlaceTypes } from './entities/Place'
 import { Location, MoodBoy } from 'tabler-icons-react'
 import { PersonTypes } from './entities/Person'
+import { FormGroupCfg } from './forms/FormGroupCfg'
+import { PersonFormGrpCfg } from './forms/PersonForm'
+import { PlaceFormGrpCfg } from './forms/PlaceForm'
 
 export interface ICollection<T extends IItem> {
     name: string
@@ -14,6 +17,8 @@ export interface ICollection<T extends IItem> {
     spotlightFns: { getId: (item: T) => string, getTitle: (item: T) => string, icon: JSX.Element }
     updateCache: (items: T[]) => void
     items: T[]
+    types: ItemTypes
+    formGrpCfg: FormGroupCfg<T>
 }
 
 export interface IDbContext {
@@ -41,6 +46,8 @@ export const DbWrapper = (props: any) => {
         },
         updateCache: setPeople,
         items: people,
+        types: PersonTypes,
+        formGrpCfg: PersonFormGrpCfg
     }), [people])
 
     const placesCol: ICollection<Place> = useMemo(() => ({
@@ -54,7 +61,9 @@ export const DbWrapper = (props: any) => {
             icon: <Location />
         },
         updateCache: setPlaces,
-        items: places
+        items: places,
+        types: PlaceTypes,
+        formGrpCfg: PlaceFormGrpCfg
     }), [places])
 
     return <QueryClientProvider client={queryClient}>
