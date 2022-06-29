@@ -2,9 +2,9 @@ import { HotkeyItem, useForm, useHotkeys } from '@mantine/hooks'
 import { Box, NumberInput, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core'
 
 import { Person } from '../entities'
-import { PersonTypeKey, PersonTypes } from '../entities/Person'
+import { DefaultPersonType, PersonTypeKey, PersonTypes } from '../entities/Person'
 import { KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
-import { isPropCombatant } from '../meta/Combatant'
+import { getPropAssociations } from '../meta/TypeAssociation'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { FldOpts, FormGroupCfg } from './FormGroupCfg'
 import { ItemForm } from '../pages/AppPage'
@@ -29,27 +29,36 @@ const PersonFormGrpCfg: FormGroupCfg<Person> = {
    },
 }
 
-const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
-   let { render, span, label, placeholder, required, ...rest } = { ...(new FldOpts), label: prop, ...cfg }
-   const cmbProp = isPropCombatant(prop)
+const pfCfg = Object.entries(PersonFormGrpCfg).map(([key, cfg]) => {
+   const prop = key as keyof Person
+   let { render, span, label, placeholder, required } = { ...(new FldOpts), label: prop, ...cfg }
+   const blank = new Person()
+   const typeAss = getPropAssociations(prop, blank)
 
-   return (form: UseForm<Person>, combatant: boolean, ref?: MutableRefObject<any>) => (!cmbProp || combatant)
-      ? <Grid.Col key={`col_${prop}`} span={span}>
-           {render!({
-               key: prop,
-               ...form.getInputProps(prop as keyof Person),
-               label, placeholder, required,
-               ref: (cfg?.initFocus ? ref : undefined),
-           })}
-        </Grid.Col>
-      : undefined
+   return (form: UseForm<Person>, type: PersonTypeKey, ref?: MutableRefObject<any>) => {
+      const shown = !typeAss.length || typeAss.includes(type)
+      if (!shown) {
+        // reset hidden fields
+        if (form.values[prop] !== blank[prop])
+          form.setFieldValue(prop, blank[prop])
+        return undefined
+      }
+      return <Grid.Col key={`col_${prop}`} span={span}>
+        {render!({
+            key: prop,
+            ...form.getInputProps(prop),
+            label, placeholder, required,
+            ref: (cfg?.initFocus ? ref : undefined),
+        })}
+      </Grid.Col>
+   }
 })
 
 const inputBreakoutKeyCombo = 'ctrl+alt+'
 const toBreakoutHotkey = (key: string) => `${inputBreakoutKeyCombo}${key[0].toLowerCase()}`
 
 export const PersonForm: ItemForm<Person> = ({ item, saveItem, deleteItem, closeForm }) => {
-  const [ isCombatant, setIsCombatant ] = useState(true)
+  const [ itemType, setItemType ] = useState(DefaultPersonType)
   const [ saving, setSaving ] = useState(false)
   const [ formType ] = useState<'create' | 'update'>(item?.id ? 'update' : 'create')
   const form = useForm<Person>({
@@ -69,7 +78,7 @@ export const PersonForm: ItemForm<Person> = ({ item, saveItem, deleteItem, close
   useHotkeys(hks)
 
   const onPersonTypeChange = (v: PersonTypeKey) => {
-    setIsCombatant(PersonTypes[v].combatant)
+    setItemType(v)
     form.setFieldValue('type', v)
     form.getInputProps('type').onChange(v)
   }
@@ -124,7 +133,7 @@ export const PersonForm: ItemForm<Person> = ({ item, saveItem, deleteItem, close
         />
       </Center>
       <Grid>
-        {pfCfg.map(f => f(form, isCombatant, initFocusRef))}
+        {pfCfg.map(f => f(form, itemType, initFocusRef))}
       </Grid>
       <Group position="apart" mt="md">
         <Button

@@ -1,4 +1,4 @@
-import { combatant } from '../meta/Combatant'
+import { association } from '../meta/TypeAssociation'
 import { IItem } from '../db/Faunadb'
 
 export class Person implements IItem  {
@@ -11,8 +11,8 @@ export class Person implements IItem  {
     firstmet?: string = ''
     background?: string = ''
     
-    @combatant class?: string = ''
-    @combatant subclass?: string = ''
+    @association('pc', 'npc') class?: string = ''
+    @association('pc', 'npc') subclass?: string = ''
 
     gender?: string = ''
     age?: number
