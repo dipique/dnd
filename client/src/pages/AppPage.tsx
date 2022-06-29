@@ -47,7 +47,7 @@ export const AppPage = <T extends IItem>({
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
     const { save, getAll, remove } = useDbHook()
-    const [ filters, setFilters ] = useState<any>({})
+    const [ filters, setFilters ] = useState<any>({ type: '' })
 
     const closeForm = () => setShowDialog(false)
     const showForm = () => setShowDialog(true)

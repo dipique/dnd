@@ -1,9 +1,11 @@
-export class Place {
+import { IItem } from '../db/Faunadb'
+
+export class Place implements IItem {
     id: string = ''
     name: string = ''
     type: PlaceTypeKey = DefaultPlaceType
     location?: string
-    img?: string = ''
+    image?: string = ''
     appearance?: string = ''
     description?: string = ''
     

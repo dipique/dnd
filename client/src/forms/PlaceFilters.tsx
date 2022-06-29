@@ -8,10 +8,10 @@ export const PlaceFilters: ItemFilters<Place> = ({
 }) => <SegmentedControl
    size='md'
    data={[
-      { value: '', label: 'All' },
+      { value: '', label: 'all' },
       ...Object.entries(PlaceTypes).map(([key, pt]) => ({
          value: key,
-         label: pt.short
+         label: key
       }))
    ]}
    defaultValue={filters.type}

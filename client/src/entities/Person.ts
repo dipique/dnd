@@ -1,10 +1,11 @@
 import { combatant } from '../meta/Combatant'
+import { IItem } from '../db/Faunadb'
 
-export class Person {
+export class Person implements IItem  {
     id: string = ''
     name: string = ''
     type: PersonTypeKey = DefaultPersonType
-    img?: string = ''
+    image?: string = ''
     player?: string = ''
     birthplace?: string = ''
     firstmet?: string = ''

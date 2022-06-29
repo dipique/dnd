@@ -13,6 +13,9 @@ const client = new Client({
 
 export interface IDbItem {
    id: string
+   type: string
+   name: string
+   image?: string
 }
 
 interface FaunaInnerRef {
@@ -24,7 +27,7 @@ interface FaunaRef {
    value: FaunaInnerRef
 }
 
-export class FaunaItem<T> {
+export class FaunaItem<T extends IDbItem> {
    ref: FaunaRef
    ts: string = ''
    data: T
@@ -34,11 +37,11 @@ export class FaunaItem<T> {
        this.ref = ref
    }
 
-   static getId<T>(item: FaunaItem<T>): string {
+   static getId<T extends IDbItem>(item: FaunaItem<T>): string {
        return item.ref.value.id
    }
 
-   static withId<T>(item: FaunaItem<T>): T {
+   static withId<T extends IDbItem>(item: FaunaItem<T>): T {
        return {
            ...item.data,
            id: FaunaItem.getId(item)
@@ -46,18 +49,18 @@ export class FaunaItem<T> {
    }
 }
 
-export class FaunaCollection<T> {
+export class FaunaCollection<T extends IDbItem> {
    data: FaunaItem<T>[] = []
 
-   static getItems<T>(col: FaunaCollection<T>): T[] {
+   static getItems<T extends IDbItem>(col: FaunaCollection<T>): T[] {
        return col.data.map(FaunaItem.withId)
    }
 }
 
-const getSingle = async (item: FaunaItem<any> | Promise<FaunaItem<any>>): Promise<any> =>
+const getSingle = async (item: FaunaItem<IDbItem> | Promise<FaunaItem<IDbItem>>): Promise<IDbItem> =>
    item instanceof Promise ? item.then(FaunaItem.withId) : FaunaItem.withId(item)
 
-const getMany = async (items: FaunaCollection<any> | Promise<FaunaCollection<any>>): Promise<any[]> =>
+const getMany = async (items: FaunaCollection<IDbItem> | Promise<FaunaCollection<IDbItem>>): Promise<IDbItem[]> =>
    items instanceof Promise ? items.then(FaunaCollection.getItems) : FaunaCollection.getItems(items)
 
 export const getAll = async (collection: string) => getMany(client.query(

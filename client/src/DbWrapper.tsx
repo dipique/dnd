@@ -1,11 +1,10 @@
 import { createContext, useMemo, useState } from 'react'
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Person, Place } from './entities'
 import { IDbActions, IItem, usePersonDb, usePlaceDb } from './db/Faunadb'
 import { PlaceTypes } from './entities/Place'
 import { Location, MoodBoy } from 'tabler-icons-react'
 import { PersonTypes } from './entities/Person'
-import { showNotification } from '@mantine/notifications'
 
 export interface ICollection<T extends IItem> {
     name: string

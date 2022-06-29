@@ -11,9 +11,9 @@ export const PersonTable: ItemTable<Person> = ({
     deleteItem: deletePerson
 }) => {
     const ths = <tr>
-          <th>Type</th>
-          <th>Name</th>
-          <th>Race</th>
+          <th>type</th>
+          <th>name</th>
+          <th>race</th>
           <th></th>
         </tr>
 

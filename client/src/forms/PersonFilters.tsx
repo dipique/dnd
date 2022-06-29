@@ -9,10 +9,10 @@ export const PersonFilters: ItemFilters<Person> = ({
 }) => <SegmentedControl
    size='md'
    data={[
-      { value: '', label: 'All' },
+      { value: '', label: 'all' },
       ...Object.entries(PersonTypes).map(([key, pt]) => ({
          value: key,
-         label: pt.short
+         label: key
       }))
    ]}
    defaultValue={filters.type}

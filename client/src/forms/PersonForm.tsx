@@ -117,7 +117,7 @@ export const PersonForm: ItemForm<Person> = ({ item, saveItem, deleteItem, close
           size='md'
           data={Object.entries(PersonTypes).map(([key, pt]) => ({
             value: key,
-            label: pt.short
+            label: pt.short.toLowerCase()
           }))}
           {...form.getInputProps('type')}
           onChange={onPersonTypeChange}

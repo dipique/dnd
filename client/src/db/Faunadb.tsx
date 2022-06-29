@@ -5,7 +5,19 @@ import { Place } from '../entities/Place'
 
 export const apiUri = 'http://localhost:8000'
 
-export interface IItem { id: string, name: string }
+export interface IItem {
+    id: string
+    name: string
+    type: string
+    image?: string
+}
+
+export interface IItemType {
+    short: string
+    display: string
+}
+
+export type ItemTypes = { [key: string]: IItemType }
 
 export interface IDbActions<T extends IItem> {
     save: (item: T) => Promise<T>
