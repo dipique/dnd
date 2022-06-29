@@ -3,9 +3,9 @@ import { Textarea } from '@mantine/core'
 
 import { FormGroupCfg } from './FormGroupCfg'
 import { Place } from '../entities/Place'
-import { PlaceInput } from './PlaceInput'
 import { ItemForm, ItemFormProps } from './ItemForm'
 import { DbContext } from '../DbWrapper'
+import { ItemInput } from './ItemInput'
 
 export const PlaceFormGrpCfg: FormGroupCfg<Place> = {
    name:        { placeholder: 'location name', initFocus: true, required: true },
@@ -13,7 +13,7 @@ export const PlaceFormGrpCfg: FormGroupCfg<Place> = {
    location:    {
     placeholder: 'i.e. city where vendor is located',
     span: 8,
-    render: p => <PlaceInput {...p} />
+    render: p => <ItemInput collection='places' {...p} />
   },
    description: {
       render: p => <Textarea {...p} />,

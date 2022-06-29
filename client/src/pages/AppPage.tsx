@@ -6,7 +6,7 @@ import { useHotkeys } from '@mantine/hooks'
 import { IItem } from '../db/Faunadb'
 import { SquarePlus } from 'tabler-icons-react'
 import { useSpotlight } from '@mantine/spotlight'
-import { ICollection } from '../DbWrapper'
+import { IItemCollection } from '../DbWrapper'
 import { ItemFormProps } from '../forms/ItemForm'
 
 export type ItemTableProps<T extends IItem> = {
@@ -25,7 +25,7 @@ export type ItemFiltersProps<T extends IItem> = {
 export type ItemFilters<T extends IItem> = FC<ItemFiltersProps<T>>
 
 interface ItemPageProps<T extends IItem> {
-    collection: ICollection<T>
+    collection: IItemCollection<T>
     renderFilters?: ItemFilters<T>
     renderTable: ItemTable<T>
     renderForm: FC<ItemFormProps<T>>
@@ -36,7 +36,7 @@ export const AppPage = <T extends IItem>({
     collection,
     renderFilters, applyFilter, renderForm, renderTable
 } : ItemPageProps<T>) => {
-    const { name, singular, useDbHook, spotlightFns, items, updateCache } = collection
+    const { name, singular, useDbHook, getTitle, getId, icon, items, updateCache } = collection
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
     const { save, getAll, remove } = useDbHook()
@@ -111,14 +111,14 @@ export const AppPage = <T extends IItem>({
         if (!items?.length) return
 
         const actions = items.map(p => ({
-            id: spotlightFns.getId(p),
-            title: spotlightFns.getTitle(p),
+            id: getId(p),
+            title: getTitle(p),
             description: `View details for this ${singular}`,
             onTrigger: () => {
                 setItemId(p.id)
                 showForm()
             },
-            icon: spotlightFns.icon,
+            icon: icon,
         }))
         registerActions(actions)
         return () => removeActions(actions.map(p => p.id))
@@ -134,7 +134,7 @@ export const AppPage = <T extends IItem>({
             size='xl'
             radius='md'
         >
-            {renderForm({ col: collection, saveItem, deleteItem, closeForm, item: data?.find(p => p.id === itemId)})}
+            {renderForm({ col: collection, saveItem, deleteItem, closeForm, item: data?.find(p => p.id === itemId) || collection.getNew()})}
         </Dialog>}
         {status == 'success' && renderFilters
             ? <Box sx={{ maxWidth: 600 }}>

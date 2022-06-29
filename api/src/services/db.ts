@@ -11,11 +11,19 @@ const client = new Client({
    scheme: 'https',
 })
 
+export interface ILink {
+   id: string
+   collection: string
+   description: string
+}
+
 export interface IDbItem {
    id: string
    type: string
    name: string
    image?: string
+
+   links?: ILink[]
 }
 
 interface FaunaInnerRef {

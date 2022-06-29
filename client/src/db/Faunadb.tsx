@@ -5,11 +5,19 @@ import { Place } from '../entities/Place'
 
 export const apiUri = 'http://localhost:8000'
 
+export interface ILink {
+    id: string
+    collection: string
+    description: string
+ }
+
 export interface IItem {
     id: string
     name: string
     type: string
     image?: string
+
+    links?: ILink[]
 }
 
 export interface IItemType {

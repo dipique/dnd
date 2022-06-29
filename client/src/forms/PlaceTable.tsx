@@ -10,7 +10,7 @@ export const PlaceTable: ItemTable<Place> = ({
     onItemClick,
     deleteItem
 }) => {
-    const { placesCol: { items, spotlightFns, getNew } } = useContext(DbContext)
+    const { placesCol: { items, getTitle, getNew } } = useContext(DbContext)
     const ths = <tr>
           <th>type</th>
           <th>name</th>
@@ -22,7 +22,7 @@ export const PlaceTable: ItemTable<Place> = ({
         <tr key={item.id}>
             <td>{PlaceTypes[item.type].short}</td>
             <td><Anchor onClick={() => onItemClick?.(item.id)}>{item.name}</Anchor></td>
-            <td>{item.location ? spotlightFns.getTitle(items.find(i => i.id === item.location)!) : ''}</td>
+            <td>{item.location ? getTitle(items.find(i => i.id === item.location)!) : ''}</td>
             <td width={32}>
                 <ActionIcon onClick={() => deleteItem?.(item.id)} color='red'>
                     <SquareX />

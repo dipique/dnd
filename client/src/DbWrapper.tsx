@@ -9,21 +9,26 @@ import { FormGroupCfg } from './forms/FormGroupCfg'
 import { PersonFormGrpCfg } from './forms/PersonForm'
 import { PlaceFormGrpCfg } from './forms/PlaceForm'
 
-export interface ICollection<T extends IItem> {
+export interface ICollection {
     name: string
     singular: string
+    icon: JSX.Element,
+    types: ItemTypes
+}
+
+export interface IItemCollection<T extends IItem> extends ICollection {
     getNew: () => T
     useDbHook: () => IDbActions<T>
-    spotlightFns: { getId: (item: T) => string, getTitle: (item: T) => string, icon: JSX.Element }
+    getId: (item: T) => string,
+    getTitle: (item: T) => string,
     updateCache: (items: T[]) => void
     items: T[]
-    types: ItemTypes
     formGrpCfg: FormGroupCfg<T>
 }
 
 export interface IDbContext {
-    peopleCol: ICollection<Person>
-    placesCol: ICollection<Place>
+    peopleCol: IItemCollection<Person>
+    placesCol: IItemCollection<Place>
 }
 
 export const DbContext = createContext<IDbContext>({} as IDbContext)
@@ -34,32 +39,28 @@ export const DbWrapper = (props: any) => {
     const [ people, setPeople ] = useState<Person[]>([])
     const [ places, setPlaces ] = useState<Place[]>([])
 
-    const peopleCol: ICollection<Person> = useMemo(() => ({
+    const peopleCol: IItemCollection<Person> = useMemo(() => ({
         name: 'people',
         singular: 'person',
         getNew: () => new Person(),
         useDbHook: usePersonDb,
-        spotlightFns: {
-            getId: (p: Person) => `${p.type}_${p.name}`,
-            getTitle: (p: Person) => `${PersonTypes[p.type].short}: ${p.name}`,
-            icon: <MoodBoy />
-        },
+        getId: (p: Person) => `${p.type}_${p.name}`,
+        getTitle: (p: Person) => `${PersonTypes[p.type].short}: ${p.name}`,
+        icon: <MoodBoy />,
         updateCache: setPeople,
         items: people,
         types: PersonTypes,
         formGrpCfg: PersonFormGrpCfg
     }), [people])
 
-    const placesCol: ICollection<Place> = useMemo(() => ({
+    const placesCol: IItemCollection<Place> = useMemo(() => ({
         name: 'places',
         singular: 'place',
         getNew: () => new Place(),
         useDbHook: usePlaceDb,
-        spotlightFns: {
-            getId: (p: Place) => `${p.type}_${p.name}`,
-            getTitle: (p: Place) => `${PlaceTypes[p.type].short}: ${p.name}`,
-            icon: <Location />
-        },
+        getId: (p: Place) => `${p.type}_${p.name}`,
+        getTitle: (p: Place) => `${PlaceTypes[p.type].short}: ${p.name}`,
+        icon: <Location />,
         updateCache: setPlaces,
         items: places,
         types: PlaceTypes,

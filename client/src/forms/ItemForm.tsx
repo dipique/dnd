@@ -6,11 +6,12 @@ import { getPropAssociations } from '../meta/TypeAssociation'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { FldOpts } from './FormGroupCfg'
 import { IItem } from '../db/Faunadb'
-import { ICollection } from '../DbWrapper'
+import { IItemCollection } from '../DbWrapper'
+import { ItemLinks } from './ItemLinks'
 
 export type ItemFormProps<T extends IItem> = {
-    item: T | undefined
-    col: ICollection<T>
+    item: T
+    col: IItemCollection<T>
     saveItem: (item: T) => Promise<void>
     deleteItem: (id: string) => Promise<void>
     closeForm: () => void
@@ -129,6 +130,7 @@ export const ItemForm = <T extends IItem>({
             <Grid>
                 {fieldCfg.map(f => f(form, itemType as string, initFocusRef))}
             </Grid>
+            <ItemLinks item={item} updateLinks={links => form.setFieldValue('links', links)} />
             <Group position="apart" mt="md">
                 <Button
                     disabled={formType === 'create'}
