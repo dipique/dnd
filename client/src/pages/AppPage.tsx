@@ -76,7 +76,7 @@ export const AppPage = <T extends IItem>({
         try {
             const items = await getAll()
             updateCache(items)
-            return await getAll()
+            return items
         } catch (err) {
             console.log(err)
             showNotification({
