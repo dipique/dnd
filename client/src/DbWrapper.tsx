@@ -1,5 +1,5 @@
-import { createContext, useMemo, useState } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { createContext, useMemo } from 'react'
+import { useQuery } from 'react-query'
 import { Person, Place } from './entities'
 import { IDbActions, IItem, ItemTypes, usePersonDb, usePlaceDb } from './db/Faunadb'
 import { PlaceTypes } from './entities/Place'
@@ -8,6 +8,7 @@ import { PersonTypes } from './entities/Person'
 import { FormGroupCfg } from './forms/FormGroupCfg'
 import { PersonFormGrpCfg } from './forms/PersonForm'
 import { PlaceFormGrpCfg } from './forms/PlaceForm'
+import { showNotification } from '@mantine/notifications'
 
 export interface ICollection {
     name: string
@@ -21,8 +22,9 @@ export interface IItemCollection<T extends IItem> extends ICollection {
     useDbHook: () => IDbActions<T>
     getId: (item: T) => string,
     getTitle: (item: T) => string,
-    updateCache: (items: T[]) => void
     items: T[]
+    dbStatus: string
+    dbFetching: boolean
     formGrpCfg: FormGroupCfg<T>
 }
 
@@ -33,11 +35,24 @@ export interface IDbContext {
 
 export const DbContext = createContext<IDbContext>({} as IDbContext)
 
-const queryClient = new QueryClient()
-
 export const DbWrapper = (props: any) => {
-    const [ people, setPeople ] = useState<Person[]>([])
-    const [ places, setPlaces ] = useState<Place[]>([])
+    const getItems = <T extends IItem>(getAll: () => Promise<T[]>, colName: string) => async () => {
+        try {
+            return await getAll()
+        } catch (err) {
+            console.log(err)
+            showNotification({
+                title: 'Error',
+                message: `Failed to fetch ${colName}`
+            })
+            return []
+        }
+    }
+
+    const pplDb = usePersonDb()
+    const pplQry = useQuery('people', getItems(pplDb.getAll, 'people'))
+    const plDb = usePlaceDb()
+    const plQry = useQuery('places', getItems(plDb.getAll, 'places'))
 
     const peopleCol: IItemCollection<Person> = useMemo(() => ({
         name: 'people',
@@ -47,11 +62,12 @@ export const DbWrapper = (props: any) => {
         getId: (p: Person) => `${p.type}_${p.name}`,
         getTitle: (p: Person) => `${PersonTypes[p.type].short}: ${p.name}`,
         icon: <MoodBoy />,
-        updateCache: setPeople,
-        items: people,
+        items: pplQry.data || [],
+        dbStatus: pplQry.status,
+        dbFetching: pplQry.isFetching,
         types: PersonTypes,
         formGrpCfg: PersonFormGrpCfg
-    }), [people])
+    }), [ pplQry ])
 
     const placesCol: IItemCollection<Place> = useMemo(() => ({
         name: 'places',
@@ -61,13 +77,12 @@ export const DbWrapper = (props: any) => {
         getId: (p: Place) => `${p.type}_${p.name}`,
         getTitle: (p: Place) => `${PlaceTypes[p.type].short}: ${p.name}`,
         icon: <Location />,
-        updateCache: setPlaces,
-        items: places,
+        items: plQry.data || [],
+        dbStatus: plQry.status,
+        dbFetching: plQry.isFetching,
         types: PlaceTypes,
         formGrpCfg: PlaceFormGrpCfg
-    }), [places])
+    }), [plQry])
 
-    return <QueryClientProvider client={queryClient}>
-        <DbContext.Provider value={{ peopleCol, placesCol }} children={props.children} />
-    </QueryClientProvider>
+    return <DbContext.Provider value={{ peopleCol, placesCol }} children={props.children} />
 }

@@ -11,6 +11,7 @@ import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
 import { DbWrapper } from './DbWrapper'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 export interface IAppContext {
     activePage: string
@@ -21,6 +22,7 @@ export interface IAppContext {
 }
 
 export const AppContext = createContext<IAppContext>({} as IAppContext)
+const queryClient = new QueryClient()
 
 export const App = () => {
     const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
@@ -46,15 +48,17 @@ export const App = () => {
                       logout, loginWithRedirect    }}
         >
             <UIWrapper>
-                <DbWrapper>
-                    <AppShell
-                        padding="md"
-                        navbar={<AppNavbar />}
-                        header={<AppHeader />}
-                    >
-                        <ActivePage />
-                    </AppShell>
-                </DbWrapper>
+                <QueryClientProvider client={queryClient}>
+                    <DbWrapper>
+                        <AppShell
+                            padding="md"
+                            navbar={<AppNavbar />}
+                            header={<AppHeader />}
+                        >
+                            <ActivePage />
+                        </AppShell>
+                    </DbWrapper>
+                </QueryClientProvider>
             </UIWrapper>
         </AppContext.Provider>
     </>

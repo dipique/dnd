@@ -1,7 +1,7 @@
 import { ActionIcon, Box, Dialog, Group, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { FC, useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
 import { useHotkeys } from '@mantine/hooks'
 import { IItem } from '../db/Faunadb'
 import { SquarePlus } from 'tabler-icons-react'
@@ -36,7 +36,7 @@ export const AppPage = <T extends IItem>({
     collection,
     renderFilters, applyFilter, renderForm, renderTable
 } : ItemPageProps<T>) => {
-    const { name, singular, useDbHook, getTitle, getId, icon, items, updateCache } = collection
+    const { name, singular, useDbHook, getTitle, getId, icon, items } = collection
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
     const { save, getAll, remove } = useDbHook()
@@ -72,21 +72,6 @@ export const AppPage = <T extends IItem>({
         }
     }
 
-    const getItems = async () => {
-        try {
-            const items = await getAll()
-            updateCache(items)
-            return items
-        } catch (err) {
-            console.log(err)
-            showNotification({
-                title: 'Error',
-                message: `Failed to fetch ${singular}`
-            })
-            return []
-        }
-    }
-
     const deleteItem = async (id: string) => {
         if (!id) return
 
@@ -103,8 +88,6 @@ export const AppPage = <T extends IItem>({
             throw err
         }
     }
-
-    const { data, status, isFetching } = useQuery(name, getItems)
 
     const { registerActions, removeActions } = useSpotlight()
     useEffect(() => {
@@ -134,13 +117,13 @@ export const AppPage = <T extends IItem>({
             size='xl'
             radius='md'
         >
-            {renderForm({ col: collection, saveItem, deleteItem, closeForm, item: data?.find(p => p.id === itemId) || collection.getNew()})}
+            {renderForm({ col: collection, saveItem, deleteItem, closeForm, item: collection.items.find(p => p.id === itemId) || collection.getNew()})}
         </Dialog>}
-        {status == 'success' && renderFilters
+        {collection.dbStatus == 'success' && renderFilters
             ? <Box sx={{ maxWidth: 600 }}>
                 <Group position='right'>
                     {renderFilters({ filters, setFilters })}
-                    <ActionIcon size='lg' disabled={status != 'success' || isFetching} onClick={() => {
+                    <ActionIcon size='lg' disabled={collection.dbStatus != 'success' || collection.dbFetching} onClick={() => {
                         setItemId('')
                         setShowDialog(true)
                     }}>
@@ -148,7 +131,7 @@ export const AppPage = <T extends IItem>({
                     </ActionIcon>
                 </Group>
                 {renderTable({
-                    items: (filters ? data?.filter(i => applyFilter(i, filters)) : data) || [],
+                    items: (filters ? collection.items.filter(i => applyFilter(i, filters)) : collection.items),
                     deleteItem,
                     onItemClick: (id: string) => {
                         setItemId(id)
