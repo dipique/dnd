@@ -6,6 +6,7 @@ export class FldOpts {
     label?: string
     span?: number = 6
     initFocus?: boolean = false
+    required?: boolean
 
     constructor(defaultSpan: number = 6) {
         this.span = defaultSpan

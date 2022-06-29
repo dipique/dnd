@@ -10,7 +10,7 @@ import { FldOpts, FormGroupCfg } from './FormGroupCfg'
 import { ItemForm } from '../pages/AppPage'
 
 const PersonFormGrpCfg: FormGroupCfg<Person> = {
-   name:        { placeholder: 'character name', initFocus: true },
+   name:        { placeholder: 'character name', initFocus: true, required: true },
    player:      { placeholder: 'player name' },
    race:        { span: 4 },
    gender:      { span: 4 },
@@ -30,16 +30,15 @@ const PersonFormGrpCfg: FormGroupCfg<Person> = {
 }
 
 const pfCfg = Object.entries(PersonFormGrpCfg).map(([prop, cfg]) => {
-   let { render, placeholder, label, span } = { ...(new FldOpts), label: prop, ...cfg }
+   let { render, span, label, placeholder, required, ...rest } = { ...(new FldOpts), label: prop, ...cfg }
    const cmbProp = isPropCombatant(prop)
 
    return (form: UseForm<Person>, combatant: boolean, ref?: MutableRefObject<any>) => (!cmbProp || combatant)
       ? <Grid.Col key={`col_${prop}`} span={span}>
            {render!({
                key: prop,
-               label,
-               placeholder,
                ...form.getInputProps(prop as keyof Person),
+               label, placeholder, required,
                ref: (cfg?.initFocus ? ref : undefined),
            })}
         </Grid.Col>
@@ -92,7 +91,6 @@ export const PersonForm: ItemForm<Person> = ({ item, saveItem, deleteItem, close
   }, [])
 
   const handleFormHotkeys = useMemo(() => (e: KeyboardEvent<HTMLFormElement>) => {
-    
     const tgt = e.target as any
     // do we not need to override in this case?
     if (tgt.nodeName === 'INPUT') {

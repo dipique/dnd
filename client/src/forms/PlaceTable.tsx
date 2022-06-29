@@ -1,5 +1,7 @@
 import { ActionIcon, Anchor, Table } from '@mantine/core'
+import { useContext } from 'react'
 import { SquareX } from 'tabler-icons-react'
+import { DbContext } from '../DbWrapper'
 import { Place, PlaceTypes } from '../entities/Place'
 import { ItemTable } from '../pages/AppPage'
 
@@ -8,9 +10,11 @@ export const PlaceTable: ItemTable<Place> = ({
     onItemClick,
     deleteItem
 }) => {
+    const { placesCol: { items, spotlightFns, getNew } } = useContext(DbContext)
     const ths = <tr>
-          <th>Type</th>
-          <th>Name</th>
+          <th>type</th>
+          <th>name</th>
+          <th>location</th>
           <th></th>
         </tr>
 
@@ -18,6 +22,7 @@ export const PlaceTable: ItemTable<Place> = ({
         <tr key={item.id}>
             <td>{PlaceTypes[item.type].short}</td>
             <td><Anchor onClick={() => onItemClick?.(item.id)}>{item.name}</Anchor></td>
+            <td>{item.location ? spotlightFns.getTitle(items.find(i => i.id === item.location)!) : ''}</td>
             <td width={32}>
                 <ActionIcon onClick={() => deleteItem?.(item.id)} color='red'>
                     <SquareX />

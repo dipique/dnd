@@ -23,10 +23,10 @@ export interface IAppContext {
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App = () => {
-    const { /* isAuthenticated,*/ logout, loginWithRedirect } = useAuth0()
+    const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
     const [ activePage, setActivePage ] = useState('people')
     
-    const isAuthenticated = true  // makes things load quick during development
+    // const isAuthenticated = true  // makes things load quick during development
 
     const ActivePage = () => {
         if (!isAuthenticated)

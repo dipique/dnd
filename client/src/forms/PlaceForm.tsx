@@ -1,16 +1,21 @@
+import { KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { HotkeyItem, useForm, useHotkeys } from '@mantine/hooks'
 import { Box, Button, Group, Textarea, SegmentedControl, Center, Grid } from '@mantine/core'
-
-import { KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
+
 import { FldOpts, FormGroupCfg } from './FormGroupCfg'
 import { ItemForm } from '../pages/AppPage'
 import { Place, PlaceTypeKey, PlaceTypes } from '../entities/Place'
+import { PlaceInput } from './PlaceInput'
 
 const PlaceFormGrpCfg: FormGroupCfg<Place> = {
-   name:        { placeholder: 'location name', initFocus: true },
-   location:    { placeholder: 'i.e. city where vendor is located', span: 8 },
+   name:        { placeholder: 'location name', initFocus: true, required: true },
    appearance:  { render: p => <Textarea {...p} /> },
+   location:    {
+    placeholder: 'i.e. city where vendor is located',
+    span: 8,
+    render: p => <PlaceInput {...p} />
+  },
    description: {
       render: p => <Textarea {...p} />,
       label: 'description / notes',
@@ -20,14 +25,13 @@ const PlaceFormGrpCfg: FormGroupCfg<Place> = {
 }
 
 const pfCfg = Object.entries(PlaceFormGrpCfg).map(([prop, cfg]) => {
-   let { render, placeholder, label, span } = { ...(new FldOpts), label: prop, ...cfg }
+   let { render, span, label, placeholder, required, ...rest } = { ...(new FldOpts), label: prop, ...cfg }
 
    return (form: UseForm<Place>, ref?: MutableRefObject<any>) => <Grid.Col key={`col_${prop}`} span={span}>
            {render!({
                key: prop,
-               label,
-               placeholder,
                ...form.getInputProps(prop as keyof Place),
+               label, placeholder, required,
                ref: (cfg?.initFocus ? ref : undefined),
            })}
         </Grid.Col>
@@ -77,7 +81,6 @@ export const PlaceForm: ItemForm<Place> = ({ item, saveItem, deleteItem, closeFo
   }, [])
 
   const handleFormHotkeys = useMemo(() => (e: KeyboardEvent<HTMLFormElement>) => {
-    
     const tgt = e.target as any
     // do we not need to override in this case?
     if (tgt.nodeName === 'INPUT') {
