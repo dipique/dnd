@@ -8,14 +8,7 @@ import { SquarePlus } from 'tabler-icons-react'
 import { useSpotlight } from '@mantine/spotlight'
 import { IItemCollection } from '../DbWrapper'
 import { ItemFormProps } from '../forms/ItemForm'
-
-export type ItemTableProps<T extends IItem> = {
-    items: T[],
-    deleteItem: (id: string) => Promise<void>,
-    onItemClick: (id: string) => void,
-}
-
-export type ItemTable<T extends IItem> = FC<ItemTableProps<T>>
+import { ItemTable } from '../forms/ItemTable'
 
 export type ItemFiltersProps<T extends IItem> = {
     filters: any,
@@ -27,14 +20,11 @@ export type ItemFilters<T extends IItem> = FC<ItemFiltersProps<T>>
 interface ItemPageProps<T extends IItem> {
     collection: IItemCollection<T>
     renderFilters?: ItemFilters<T>
-    renderTable: ItemTable<T>
     renderForm: FC<ItemFormProps<T>>
-    applyFilter: (item: T, filter: any) => boolean
 }
 
 export const AppPage = <T extends IItem>({
-    collection,
-    renderFilters, applyFilter, renderForm, renderTable
+    collection, renderFilters, renderForm
 } : ItemPageProps<T>) => {
     const { name, singular, useDbHook, getTitle, getId, icon, items } = collection
     const [ showDialog, setShowDialog ] = useState(false)
@@ -130,14 +120,15 @@ export const AppPage = <T extends IItem>({
                         <SquarePlus width={32} height={32} color='green' />
                     </ActionIcon>
                 </Group>
-                {renderTable({
-                    items: (filters ? collection.items.filter(i => applyFilter(i, filters)) : collection.items),
-                    deleteItem,
-                    onItemClick: (id: string) => {
+                <ItemTable<T>
+                    deleteItem={deleteItem}
+                    onItemClick={(id: string) => {
                         setItemId(id)
                         setShowDialog(true)
-                    }
-                })}
+                    }}
+                    collection={collection}
+                    filters={filters}
+                />
               </Box>
             : <Loader />}
     </>
