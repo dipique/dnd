@@ -3,18 +3,18 @@ import { useContext, useMemo } from 'react'
 import { IItem } from '../db/Faunadb'
 import { DbContext, ICollection, IItemCollection } from '../DbWrapper'
 
-export const ItemInput = ({ collection = '', ...rest }: any) => {
+export const ItemInput = ({ collection = '', readOnly = false, idsToExclude = [], ...rest }: any) => {
     const { placesCol, peopleCol } = useContext(DbContext)
 
     // return collection items IF there is no collection filter OR the filter matches the collection
     const includeColResults = (col: ICollection) => !collection || collection === col.name
 
     const getColItems = <T extends IItem>(col: IItemCollection<T>) =>
-        includeColResults(col) ? col.items.map(i => ({
+        includeColResults(col) ? col.items.filter(i => !idsToExclude.includes(i.id)).map(i => ({
             collection: col.name,
             group: `${col.name} - ${i.type}`,
             value: i.id,
-            label: col.getTitle(i)
+            label: col.getTitle(i),
         })) : []
 
     const items = useMemo(() => [
@@ -25,6 +25,7 @@ export const ItemInput = ({ collection = '', ...rest }: any) => {
     return <Select
         searchable
         data={items}
+        disabled={readOnly}
         {...rest}
     />
 }

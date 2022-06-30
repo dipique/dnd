@@ -130,7 +130,7 @@ export const ItemForm = <T extends IItem>({
             <Grid>
                 {fieldCfg.map(f => f(form, itemType as string, initFocusRef))}
             </Grid>
-            <ItemLinks item={item} updateLinks={links => form.setFieldValue('links', links)} />
+            <ItemLinks item={item} updateLinks={links => form.setFieldValue('links', links)} style={{ paddingTop: '8px' }} />
             <Group position="apart" mt="md">
                 <Button
                     disabled={formType === 'create'}

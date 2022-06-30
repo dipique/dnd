@@ -10,13 +10,15 @@ export const ItemLink: FC<{
     onChange?: (v: string) => void
     readOnly: boolean
     deleteLink: (link: ILink) => void
-}> = ({ link, onChange, deleteLink, readOnly = false }) => <div style={{ display: 'flex' }}>
+    idsToExclude: string[]
+}> = ({ link, onChange, deleteLink, idsToExclude = [], readOnly = false }) => <div style={{ display: 'flex' }}>
         <div style={{ width: '91%' }}>
             <ItemInput
                 collection={link.collection}
                 value={link.id}
                 onChange={onChange}
                 readOnly={readOnly}
+                idsToExclude={link.id ? [] : idsToExclude} // don't exclude items from the things that are supposed to display them
             />
         </div>
         <div style={{ width: '9%' }}>
@@ -33,8 +35,9 @@ export const ItemLink: FC<{
 
 export const ItemLinks: FC<{
     item: IItem,
-    updateLinks: (links: ILink[]) => void
-}> = ({ item, updateLinks }) => {
+    updateLinks: (links: ILink[]) => void,
+    [k: string]: any,
+}> = ({ item, updateLinks, ...rest }) => {
     const [ links, setLinks ] = useState(item.links || [])
     const { findItemById } = useContext(DbContext)
     const handleItemChange = (collection: string, idx: number, v: string) => {
@@ -57,7 +60,7 @@ export const ItemLinks: FC<{
         }
     }
 
-    return <InputWrapper label='links'>
+    return <InputWrapper label='links' {...rest}>
         <Stack>{[ ...links, {} as ILink].map((l, idx) =>
             <ItemLink
                 key={l.id || idx}
@@ -65,6 +68,7 @@ export const ItemLinks: FC<{
                 readOnly={!!l.id} // readonly if this already has a value
                 onChange={(v: string) => handleItemChange(l.collection, idx, v)} 
                 deleteLink={handleItemDelete}
+                idsToExclude={links.map(l => l.id || '')}
             />
         )}</Stack>
     </InputWrapper>
