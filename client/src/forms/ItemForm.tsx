@@ -127,7 +127,7 @@ export const ItemForm = <T extends IItem>({
                     onChange={v => onTypeChange(v as keyof T)}
                 />
             </Center>
-            <Grid>
+            <Grid gutter='xs'>
                 {fieldCfg.map(f => f(form, itemType as string, initFocusRef))}
             </Grid>
             <ItemLinks item={item} updateLinks={links => form.setFieldValue('links', links)} style={{ paddingTop: '8px' }} />

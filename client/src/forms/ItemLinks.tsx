@@ -1,4 +1,4 @@
-import { ActionIcon, InputWrapper, Stack } from '@mantine/core'
+import { ActionIcon, InputWrapper, Stack, TextInput } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
 import { SquareX } from 'tabler-icons-react'
 import { IItem, ILink } from '../db/Faunadb'
@@ -7,31 +7,45 @@ import { ItemInput } from './ItemInput'
 
 export const ItemLink: FC<{
     link: ILink,
-    onChange?: (v: string) => void
+    onChange?: (id: string, desc?: string) => void
     readOnly: boolean
     deleteLink: (link: ILink) => void
     idsToExclude: string[]
-}> = ({ link, onChange, deleteLink, idsToExclude = [], readOnly = false }) => <div style={{ display: 'flex' }}>
-        <div style={{ width: '91%' }}>
-            <ItemInput
-                collection={link.collection}
-                value={link.id}
-                onChange={onChange}
-                readOnly={readOnly}
-                idsToExclude={link.id ? [] : idsToExclude} // don't exclude items from the things that are supposed to display them
-            />
+}> = ({ link, onChange, deleteLink, idsToExclude = [], readOnly = false }) => link.id
+  ? <div style={ { borderLeft: '3px white solid' }}>
+        <div style={{ display: 'flex' }}>
+            <div style={{ width: '91%' }}>
+                <ItemInput
+                    collection={link.collection}
+                    value={link.id}
+                    onChange={(id: string) => onChange?.(id, link.description)}
+                    readOnly={readOnly}
+                />
+            </div>
+            <div style={{ width: '9%' }}>
+                {link.id && <ActionIcon
+                        style={{ marginLeft: '5px', borderRight: '0' }}
+                        color='red'
+                        size={36}
+                        onClick={() => deleteLink(link)}
+                >
+                    <SquareX size={36} />
+                </ActionIcon>}
+            </div>
         </div>
-        <div style={{ width: '9%' }}>
-            {link.id && <ActionIcon
-                    style={{ marginLeft: '5px', borderRight: '0' }}
-                    color='red'
-                    size={36}
-                    onClick={() => deleteLink(link)}
-            >
-                <SquareX size={36} />
-            </ActionIcon>}
-        </div>
+        <TextInput
+            placeholder='describe how this item is related/linked'
+            value={link.description}
+            disabled={!link.id}
+            onChange={e => onChange?.(link.id, e.target.value)}
+            style={{ paddingTop: '6px' }}
+        />
     </div>
+  : <ItemInput
+        onChange={(id: string) => onChange?.(id)}
+        placeholder={'link new item'}
+        idsToExclude={idsToExclude}
+    />
 
 export const ItemLinks: FC<{
     item: IItem,
@@ -40,16 +54,28 @@ export const ItemLinks: FC<{
 }> = ({ item, updateLinks, ...rest }) => {
     const [ links, setLinks ] = useState(item.links || [])
     const { findItemById } = useContext(DbContext)
-    const handleItemChange = (collection: string, idx: number, v: string) => {
-        const isNew = idx === (links.length || 0) && !!v
+    const handleItemChange = (collection: string, id: string, description: string) => {
+        if (!id) return
+
+        const matchIdx = links.findIndex(l => l.id === id)
+        const isNew = matchIdx < 0
+        let newLinks: ILink[] = []
         if (isNew) {
-            collection ||= findItemById(v)?.collection || ''
+            collection ||= findItemById(id)?.collection || ''
             if (!collection)
                 throw new Error('Could not find item in any collection')
-            const newLinks = [...links, { collection, id: v, description: 'added' }]
-            updateLinks(newLinks)
-            setLinks(newLinks)
+            newLinks = [...links, { collection, id, description }]
+        } else {
+            const match = links[matchIdx]
+            if (match.description === description)
+                return // no change
+            
+            newLinks = [...links]
+            newLinks[matchIdx] = { collection, id, description}
         }
+
+        updateLinks(newLinks)
+        setLinks(newLinks)
     }
 
     const handleItemDelete = (link: ILink) => {
@@ -66,7 +92,7 @@ export const ItemLinks: FC<{
                 key={l.id || idx}
                 link={l}
                 readOnly={!!l.id} // readonly if this already has a value
-                onChange={(v: string) => handleItemChange(l.collection, idx, v)} 
+                onChange={(id: string, desc?: string) => handleItemChange(l.collection, id, desc || '')} 
                 deleteLink={handleItemDelete}
                 idsToExclude={links.map(l => l.id || '')}
             />
