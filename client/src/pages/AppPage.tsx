@@ -7,26 +7,18 @@ import { IItem } from '../db/Faunadb'
 import { SquarePlus } from 'tabler-icons-react'
 import { useSpotlight } from '@mantine/spotlight'
 import { IItemCollection } from '../DbWrapper'
-import { ItemFormProps } from '../forms/ItemForm'
 import { ItemTable } from '../forms/ItemTable'
+import { ItemForm } from '../forms/ItemForm'
 
 export type ItemFiltersProps<T extends IItem> = {
     filters: any,
     setFilters: (filters: any) => void,
 }
 
-export type ItemFilters<T extends IItem> = FC<ItemFiltersProps<T>>
-
-interface ItemPageProps<T extends IItem> {
-    collection: IItemCollection<T>
-    renderFilters?: ItemFilters<T>
-    renderForm: FC<ItemFormProps<T>>
-}
-
 export const AppPage = <T extends IItem>({
-    collection, renderFilters, renderForm
-} : ItemPageProps<T>) => {
-    const { name, singular, useDbHook, getTitle, getId, icon, items } = collection
+    col
+} : { col: IItemCollection<T> }) => {
+    const { name, singular, useDbHook, getTitle, getId, icon, items } = col
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
     const { save, getAll, remove } = useDbHook()
@@ -107,13 +99,19 @@ export const AppPage = <T extends IItem>({
             size='xl'
             radius='md'
         >
-            {renderForm({ col: collection, saveItem, deleteItem, closeForm, item: collection.items.find(p => p.id === itemId) || collection.getNew()})}
+            <ItemForm<T>
+                col={col}
+                item={col.items.find(p => p.id === itemId) || col.getNew()}
+                closeForm={closeForm}
+                saveItem={saveItem}
+                deleteItem={deleteItem}
+            />
         </Dialog>}
-        {collection.dbStatus == 'success' && renderFilters
+        {col.dbStatus == 'success' && col.renderFilters
             ? <Box sx={{ maxWidth: 600 }}>
                 <Group position='right'>
-                    {renderFilters({ filters, setFilters })}
-                    <ActionIcon size='lg' disabled={collection.dbStatus != 'success' || collection.dbFetching} onClick={() => {
+                    {col.renderFilters({ filters, setFilters })}
+                    <ActionIcon size='lg' disabled={col.dbStatus != 'success' || col.dbFetching} onClick={() => {
                         setItemId('')
                         setShowDialog(true)
                     }}>
@@ -126,7 +124,7 @@ export const AppPage = <T extends IItem>({
                         setItemId(id)
                         setShowDialog(true)
                     }}
-                    collection={collection}
+                    collection={col}
                     filters={filters}
                 />
               </Box>

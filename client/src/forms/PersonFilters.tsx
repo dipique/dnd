@@ -1,12 +1,12 @@
 import { SegmentedControl } from '@mantine/core'
 import { Person } from '../entities'
 import { PersonTypeKey, PersonTypes } from '../entities/Person'
-import { ItemFilters } from '../pages/AppPage'
+import { ItemFiltersProps } from '../pages/AppPage'
 
 
-export const PersonFilters: ItemFilters<Person> = ({
+export const PersonFilters = ({
    filters, setFilters
-}) => <SegmentedControl
+}: ItemFiltersProps<Person>) => <SegmentedControl
    size='md'
    data={[
       { value: '', label: 'all' },

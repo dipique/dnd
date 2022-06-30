@@ -1,4 +1,4 @@
-import { createContext, useMemo } from 'react'
+import { createContext, FC, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { Person, Place } from './entities'
 import { IDbActions, IItem, IItemType, ItemTypes, usePersonDb, usePlaceDb } from './db/Faunadb'
@@ -6,10 +6,14 @@ import { PlaceTypes } from './entities/Place'
 import { Location, MoodBoy } from 'tabler-icons-react'
 import { PersonTypes } from './entities/Person'
 import { FormGroupCfg } from './forms/FormGroupCfg'
-import { PersonFormGrpCfg } from './forms/PersonForm'
-import { PlaceFormGrpCfg } from './forms/PlaceForm'
+import { PersonForm, PersonFormGrpCfg } from './forms/PersonForm'
+import { PlaceForm, PlaceFormGrpCfg } from './forms/PlaceForm'
 import { showNotification } from '@mantine/notifications'
 import { ItemTableColumnDef } from './forms/ItemTable'
+import { ItemFiltersProps } from './pages/AppPage'
+import { ItemFormProps } from './forms/ItemForm'
+import { PlaceFilters } from './forms/PlaceFilters'
+import { PersonFilters } from './forms/PersonFilters'
 
 export interface ICollection {
     name: string
@@ -30,6 +34,8 @@ export interface IItemCollection<T extends IItem> extends ICollection {
     getType: (item: T) => IItemType
     columns: ItemTableColumnDef<T>[]
     applyFilter?: (item: T, filter: any) => boolean
+    renderFilters?: FC<ItemFiltersProps<T>>
+    renderForm: FC<ItemFormProps<T>>
 }
 
 export interface IFindItemResult {
@@ -80,6 +86,8 @@ export const DbWrapper = (props: any) => {
         formGrpCfg: PersonFormGrpCfg,
         getType: (p: Person) => PersonTypes[p.type],
         columns: [ { name: 'race' } ],
+        renderFilters: PersonFilters,
+        renderForm: PersonForm,
     }), [ pplQry ])
 
     const placesCol: IItemCollection<Place> = useMemo(() => ({
@@ -100,6 +108,8 @@ export const DbWrapper = (props: any) => {
             name: 'location',
             value: (p, col) => p.location ? col.getTitle(col.items.find(i => i.id === p.location)!) : ''
         } ],
+        renderFilters: PlaceFilters,
+        renderForm: PlaceForm,
     }), [plQry])
 
     const findItemById = useMemo(() =>
