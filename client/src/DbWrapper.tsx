@@ -28,9 +28,16 @@ export interface IItemCollection<T extends IItem> extends ICollection {
     formGrpCfg: FormGroupCfg<T>
 }
 
+export interface IFindItemResult {
+    item: IItem
+    id: string
+    collection: string
+}
+
 export interface IDbContext {
     peopleCol: IItemCollection<Person>
     placesCol: IItemCollection<Place>
+    findItemById: (id: string) => IFindItemResult | undefined
 }
 
 export const DbContext = createContext<IDbContext>({} as IDbContext)
@@ -84,5 +91,16 @@ export const DbWrapper = (props: any) => {
         formGrpCfg: PlaceFormGrpCfg
     }), [plQry])
 
-    return <DbContext.Provider value={{ peopleCol, placesCol }} children={props.children} />
+    const findItemById = useMemo(() =>
+        (id: string) => {
+            if (!id) return undefined
+            const person = peopleCol.items.find(p => p.id === id)
+            if (person) return { item: person, id, collection: 'people' }
+            const place = placesCol.items.find(p => p.id === id)
+            if (place) return { item: place, id, collection: 'places' }
+            return undefined
+        }
+    , [peopleCol, placesCol])
+
+    return <DbContext.Provider value={{ peopleCol, placesCol, findItemById }} children={props.children} />
 }
