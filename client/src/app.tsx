@@ -1,9 +1,7 @@
 import { createContext, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-react'
-
 import { AppShell } from '@mantine/core'
-
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
 import { People, Places } from './pages/EntityPages'

@@ -3,13 +3,11 @@ import { useQuery } from 'react-query'
 import { showNotification } from '@mantine/notifications'
 import { Location, MoodBoy } from 'tabler-icons-react'
 import { IDbActions, DbItem, useItemDb } from './db/Faunadb'
-
 import { Person, Place, PersonTypes, PlaceTypes, IItemType, ItemTypes } from './entities'
 import {
     FormGroupCfg,
     ItemTableColumnDef,
     ItemFormProps,
-    ItemFilters,
 
     PlaceForm,
     PlaceFormGrpCfg,

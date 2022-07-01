@@ -1,5 +1,5 @@
-import { Select } from '@mantine/core'
 import { useContext, useMemo } from 'react'
+import { Select } from '@mantine/core'
 import { DbItem } from '../db/Faunadb'
 import { DbContext, ICollection, IItemCollection } from '../DbWrapper'
 
