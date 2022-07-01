@@ -1,11 +1,8 @@
 import { association } from '../meta/TypeAssociation'
-import { IItem } from '../db/Faunadb'
+import { DbItem } from '../db/Faunadb'
 
-export class Person implements IItem  {
-    id: string = ''
-    name: string = ''
+export class Person extends DbItem  {
     type: PersonTypeKey = DefaultPersonType
-    image?: string = ''
     player?: string = ''
     birthplace?: string = ''
     firstmet?: string = ''
@@ -21,11 +18,6 @@ export class Person implements IItem  {
     description?: string = ''
     
     notes?: string = ''
-
-    constructor(type?: PersonTypeKey) {
-        if (type)
-            this.type = type
-    }
 }
 
 export const PersonTypes = {

@@ -1,21 +1,16 @@
+import { useEffect, useState } from 'react'
+import { useQueryClient } from 'react-query'
 import { ActionIcon, Box, Dialog, Group, Loader, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { FC, useEffect, useState } from 'react'
-import { useQueryClient } from 'react-query'
 import { useHotkeys } from '@mantine/hooks'
-import { IItem } from '../db/Faunadb'
-import { SquarePlus } from 'tabler-icons-react'
 import { useSpotlight } from '@mantine/spotlight'
+import { SquarePlus } from 'tabler-icons-react'
+
+import { DbItem } from '../db/Faunadb'
 import { IItemCollection } from '../DbWrapper'
-import { ItemTable } from '../forms/ItemTable'
-import { ItemForm } from '../forms/ItemForm'
+import { ItemTable, ItemFilters, ItemForm } from '../forms'
 
-export type ItemFiltersProps<T extends IItem> = {
-    filters: any,
-    setFilters: (filters: any) => void,
-}
-
-export const AppPage = <T extends IItem>({
+export const AppPage = <T extends DbItem>({
     col
 } : { col: IItemCollection<T> }) => {
     const { name, singular, useDbHook, getTitle, getId, icon, items } = col
@@ -107,10 +102,10 @@ export const AppPage = <T extends IItem>({
                 deleteItem={deleteItem}
             />
         </Dialog>}
-        {col.dbStatus == 'success' && col.renderFilters
+        {col.dbStatus == 'success'
             ? <Box sx={{ maxWidth: 600 }}>
                 <Group position='right'>
-                    {col.renderFilters({ filters, setFilters })}
+                    <ItemFilters<T> filters={filters} setFilters={setFilters} types={col.types} />
                     <ActionIcon size='lg' disabled={col.dbStatus != 'success' || col.dbFetching} onClick={() => {
                         setItemId('')
                         setShowDialog(true)

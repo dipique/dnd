@@ -1,7 +1,7 @@
 import { ActionIcon, InputWrapper, Stack, TextInput } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
 import { SquareX } from 'tabler-icons-react'
-import { IItem, ILink } from '../db/Faunadb'
+import { DbItem, ILink } from '../db/Faunadb'
 import { DbContext } from '../DbWrapper'
 import { ItemInput } from './ItemInput'
 
@@ -48,7 +48,7 @@ export const ItemLink: FC<{
     />
 
 export const ItemLinks: FC<{
-    item: IItem,
+    item: DbItem,
     updateLinks: (links: ILink[]) => void,
     [k: string]: any,
 }> = ({ item, updateLinks, ...rest }) => {

@@ -2,19 +2,17 @@ import { createContext, FC, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { showNotification } from '@mantine/notifications'
 import { Location, MoodBoy } from 'tabler-icons-react'
-import { IDbActions, IItem, usePersonDb, usePlaceDb } from './db/Faunadb'
-import { ItemFiltersProps } from './pages/AppPage'
+import { IDbActions, DbItem, useItemDb } from './db/Faunadb'
 
 import { Person, Place, PersonTypes, PlaceTypes, IItemType, ItemTypes } from './entities'
 import {
     FormGroupCfg,
     ItemTableColumnDef,
     ItemFormProps,
+    ItemFilters,
 
     PlaceForm,
     PlaceFormGrpCfg,
-    PlaceFilters,
-    PersonFilters,
     PersonForm,
     PersonFormGrpCfg
 } from './forms'
@@ -26,7 +24,7 @@ export interface ICollection {
     types: ItemTypes
 }
 
-export interface IItemCollection<T extends IItem> extends ICollection {
+export interface IItemCollection<T extends DbItem> extends ICollection {
     getNew: () => T
     useDbHook: () => IDbActions<T>
     getId: (item: T) => string,
@@ -38,12 +36,13 @@ export interface IItemCollection<T extends IItem> extends ICollection {
     getType: (item: T) => IItemType
     columns: ItemTableColumnDef<T>[]
     applyFilter?: (item: T, filter: any) => boolean
-    renderFilters?: FC<ItemFiltersProps<T>>
     renderForm: FC<ItemFormProps<T>>
+    useDb: () => IDbActions<T>
+    types: ItemTypes
 }
 
 export interface IFindItemResult {
-    item: IItem
+    item: DbItem
     id: string
     collection: string
 }
@@ -56,8 +55,11 @@ export interface IDbContext {
 
 export const DbContext = createContext<IDbContext>({} as IDbContext)
 
+export const usePersonDb = () => useItemDb<Person>('people', () => new Person())
+export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())
+
 export const DbWrapper = (props: any) => {
-    const getItems = <T extends IItem>(getAll: () => Promise<T[]>, colName: string) => async () => {
+    const getItems = <T extends DbItem>(getAll: () => Promise<T[]>, colName: string) => async () => {
         try {
             return await getAll()
         } catch (err) {
@@ -90,8 +92,8 @@ export const DbWrapper = (props: any) => {
         formGrpCfg: PersonFormGrpCfg,
         getType: (p: Person) => PersonTypes[p.type],
         columns: [ { name: 'race' } ],
-        renderFilters: PersonFilters,
         renderForm: PersonForm,
+        useDb: usePersonDb,
     }), [ pplQry ])
 
     const placesCol: IItemCollection<Place> = useMemo(() => ({
@@ -112,8 +114,8 @@ export const DbWrapper = (props: any) => {
             name: 'location',
             value: (p, col) => p.location ? col.getTitle(col.items.find(i => i.id === p.location)!) : ''
         } ],
-        renderFilters: PlaceFilters,
         renderForm: PlaceForm,
+        useDb: usePlaceDb,
     }), [plQry])
 
     const findItemById = useMemo(() =>

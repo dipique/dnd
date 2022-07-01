@@ -1,6 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useMemo } from 'react'
-import { Person, Place } from '../entities'
 
 export const apiUri = 'http://localhost:8000'
 
@@ -10,23 +9,23 @@ export interface ILink {
     description: string
  }
 
-export interface IItem {
-    id: string
-    name: string
-    type: string
-    image?: string
+export class DbItem {
+    id: string = ''
+    name: string = ''
+    type: string = ''
+    image: string = ''
 
-    links?: ILink[]
+    links: ILink[] = []
 }
 
-export interface IDbActions<T extends IItem> {
+export interface IDbActions<T extends DbItem> {
     save: (item: T) => Promise<T>
     get: (id: string) => Promise<T>
     getAll: () => Promise<T[]>
     remove: (id: string) => Promise<void>
 }
 
-const useItemDb = <T extends IItem>(colName: string, createNew: () => T) => {
+export const useItemDb = <T extends DbItem>(colName: string, createNew: () => T) => {
     const { getAccessTokenSilently } = useAuth0()
     const getToken = useMemo(() => async () => await getAccessTokenSilently({
         audience: 'dnd-api',
@@ -73,6 +72,3 @@ const useItemDb = <T extends IItem>(colName: string, createNew: () => T) => {
         }
     } as IDbActions<T>
 }
-
-export const usePersonDb = () => useItemDb<Person>('people', () => new Person())
-export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())

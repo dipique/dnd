@@ -1,23 +1,23 @@
 import { ActionIcon, Anchor, Table } from '@mantine/core'
 import { useMemo } from 'react'
 import { SquareX } from 'tabler-icons-react'
-import { IItem } from '../db/Faunadb'
+import { DbItem } from '../db/Faunadb'
 import { IItemCollection } from '../DbWrapper'
 
-export interface ItemTableColumnDef<T extends IItem> {
+export interface ItemTableColumnDef<T extends DbItem> {
     name: string
     header?: string | JSX.Element
     value?: (item: T, col: IItemCollection<T>) => string | JSX.Element
 }
 
-export type ItemTableProps<T extends IItem> = {
+export type ItemTableProps<T extends DbItem> = {
     deleteItem: (id: string) => Promise<void>,
     onItemClick: (id: string) => void,
     collection: IItemCollection<T>
     filters?: any
 }
 
-export const ItemTable = <T extends IItem>({
+export const ItemTable = <T extends DbItem>({
     onItemClick,
     deleteItem,
     collection,

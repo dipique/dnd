@@ -1,20 +1,12 @@
-import { IItem } from '../db/Faunadb'
+import { DbItem } from '../db/Faunadb'
 
-export class Place implements IItem {
-    id: string = ''
-    name: string = ''
+export class Place extends DbItem {
     type: PlaceTypeKey = DefaultPlaceType
     location?: string
-    image?: string = ''
     appearance?: string = ''
     description?: string = ''
     
     notes?: string = ''
-
-    constructor(type?: PlaceTypeKey) {
-        if (type)
-            this.type = type
-    }
 }
 
 export const PlaceTypes = {

@@ -6,11 +6,11 @@ import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 
 import { getPropAssociations } from '../meta/TypeAssociation'
 import { FldOpts } from './FormGroupCfg'
-import { IItem } from '../db/Faunadb'
+import { DbItem } from '../db/Faunadb'
 import { IItemCollection } from '../DbWrapper'
 import { ItemLinks } from './ItemLinks'
 
-export type ItemFormProps<T extends IItem> = {
+export type ItemFormProps<T extends DbItem> = {
     item: T
     col: IItemCollection<T>
     saveItem: (item: T) => Promise<void>
@@ -21,7 +21,7 @@ export type ItemFormProps<T extends IItem> = {
 const inputBreakoutKeyCombo = 'ctrl+alt+'
 const toBreakoutHotkey = (key: string) => `${inputBreakoutKeyCombo}${key[0].toLowerCase()}`
 
-export const ItemForm = <T extends IItem>({
+export const ItemForm = <T extends DbItem>({
     item, col,
     saveItem, deleteItem,
     closeForm
