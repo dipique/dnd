@@ -3,8 +3,7 @@ import express from 'express'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 dotenv.config()
-import { router as rtPeople } from './routes/people'
-import { router as rtPlaces } from './routes/places'
+import { routers } from './routes/entities'
 
 const app = express()
 
@@ -24,8 +23,7 @@ app.use((req, res, next) => {
 })
 
 // register routes
-app.use('/', rtPeople)
-app.use('/', rtPlaces)
+routers.forEach(router => app.use('/', router))
 
 // error handling
 app.use((req, res, next) => {
