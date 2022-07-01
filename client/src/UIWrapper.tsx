@@ -1,12 +1,12 @@
 import { useContext, useMemo } from 'react'
+import { Search } from 'tabler-icons-react'
 
 import { MantineProvider } from '@mantine/core'
 import { SpotlightProvider, SpotlightAction } from '@mantine/spotlight'
-import { Search } from 'tabler-icons-react'
-
-import { getActions, slIconSize } from './SpotlightActions'
-import { AppContext } from './app'
 import { NotificationsProvider } from '@mantine/notifications'
+import { getActions, slIconSize } from './SpotlightActions'
+
+import { AppContext } from './app'
 
 export const UIWrapper = (props: any) => {
     const ctx = useContext(AppContext)

@@ -1,7 +1,14 @@
-import { Person } from './Person'
-import { Place } from './Place'
+import { Person, PersonTypes, PersonTypeKey, DefaultPersonType } from './Person'
+import { Place, PlaceTypes, PlaceTypeKey, DefaultPlaceType } from './Place'
 
 export {
     Person,
-    Place
+    PersonTypes,
+    PersonTypeKey,
+    DefaultPersonType,
+
+    Place,
+    PlaceTypes,
+    PlaceTypeKey,
+    DefaultPlaceType,
 }

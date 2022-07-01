@@ -1,9 +1,10 @@
-import { HotkeyItem, useForm, useHotkeys } from '@mantine/hooks'
-import { Box, Button, Group, SegmentedControl, Center, Grid } from '@mantine/core'
-
 import { KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
-import { getPropAssociations } from '../meta/TypeAssociation'
+
+import { Box, Button, Group, SegmentedControl, Center, Grid } from '@mantine/core'
+import { HotkeyItem, useForm, useHotkeys } from '@mantine/hooks'
 import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
+
+import { getPropAssociations } from '../meta/TypeAssociation'
 import { FldOpts } from './FormGroupCfg'
 import { IItem } from '../db/Faunadb'
 import { IItemCollection } from '../DbWrapper'

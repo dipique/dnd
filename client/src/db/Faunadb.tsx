@@ -1,7 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useMemo } from 'react'
-import { Person } from '../entities'
-import { Place } from '../entities/Place'
+import { Person, Place } from '../entities'
 
 export const apiUri = 'http://localhost:8000'
 

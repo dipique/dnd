@@ -1,9 +1,9 @@
+import { createContext, useState } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-react'
-import { useState } from 'react'
 
 import { AppShell } from '@mantine/core'
 
-import { createContext } from 'react'
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
 import { People } from './pages/People'
@@ -11,7 +11,6 @@ import { Places } from './pages/Places'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
 import { DbWrapper } from './DbWrapper'
-import { QueryClient, QueryClientProvider } from 'react-query'
 
 export interface IAppContext {
     activePage: string

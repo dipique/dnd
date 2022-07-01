@@ -1,19 +1,23 @@
 import { createContext, FC, useMemo } from 'react'
 import { useQuery } from 'react-query'
-import { Person, Place } from './entities'
 import { IDbActions, IItem, IItemType, ItemTypes, usePersonDb, usePlaceDb } from './db/Faunadb'
-import { PlaceTypes } from './entities/Place'
 import { Location, MoodBoy } from 'tabler-icons-react'
-import { PersonTypes } from './entities/Person'
-import { FormGroupCfg } from './forms/FormGroupCfg'
-import { PersonForm, PersonFormGrpCfg } from './forms/PersonForm'
-import { PlaceForm, PlaceFormGrpCfg } from './forms/PlaceForm'
 import { showNotification } from '@mantine/notifications'
-import { ItemTableColumnDef } from './forms/ItemTable'
 import { ItemFiltersProps } from './pages/AppPage'
-import { ItemFormProps } from './forms/ItemForm'
-import { PlaceFilters } from './forms/PlaceFilters'
-import { PersonFilters } from './forms/PersonFilters'
+
+import { Person, Place, PersonTypes, PlaceTypes } from './entities'
+import {
+    FormGroupCfg,
+    ItemTableColumnDef,
+    ItemFormProps,
+
+    PlaceForm,
+    PlaceFormGrpCfg,
+    PlaceFilters,
+    PersonFilters,
+    PersonForm,
+    PersonFormGrpCfg
+} from './forms'
 
 export interface ICollection {
     name: string

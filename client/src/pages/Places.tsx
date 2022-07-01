@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Place } from '../entities/Place'
+import { Place } from '../entities'
 import { AppPage } from './AppPage'
 import { DbContext } from '../DbWrapper'
 
