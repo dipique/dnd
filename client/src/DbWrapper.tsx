@@ -1,11 +1,11 @@
 import { createContext, FC, useMemo } from 'react'
 import { useQuery } from 'react-query'
-import { IDbActions, IItem, IItemType, ItemTypes, usePersonDb, usePlaceDb } from './db/Faunadb'
-import { Location, MoodBoy } from 'tabler-icons-react'
 import { showNotification } from '@mantine/notifications'
+import { Location, MoodBoy } from 'tabler-icons-react'
+import { IDbActions, IItem, usePersonDb, usePlaceDb } from './db/Faunadb'
 import { ItemFiltersProps } from './pages/AppPage'
 
-import { Person, Place, PersonTypes, PlaceTypes } from './entities'
+import { Person, Place, PersonTypes, PlaceTypes, IItemType, ItemTypes } from './entities'
 import {
     FormGroupCfg,
     ItemTableColumnDef,

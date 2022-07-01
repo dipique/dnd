@@ -19,13 +19,6 @@ export interface IItem {
     links?: ILink[]
 }
 
-export interface IItemType {
-    short: string
-    display: string
-}
-
-export type ItemTypes = { [key: string]: IItemType }
-
 export interface IDbActions<T extends IItem> {
     save: (item: T) => Promise<T>
     get: (id: string) => Promise<T>

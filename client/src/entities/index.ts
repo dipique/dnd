@@ -1,5 +1,6 @@
 import { Person, PersonTypes, PersonTypeKey, DefaultPersonType } from './Person'
 import { Place, PlaceTypes, PlaceTypeKey, DefaultPlaceType } from './Place'
+import { ItemTypes, IItemType } from './ItemTypes'
 
 export {
     Person,
@@ -11,4 +12,7 @@ export {
     PlaceTypes,
     PlaceTypeKey,
     DefaultPlaceType,
+
+    IItemType,
+    ItemTypes,
 }

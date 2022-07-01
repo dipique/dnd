@@ -32,22 +32,18 @@ export const PersonTypes = {
     npc:  {
         display: 'Non-Player Character',
         short: 'NPC',
-        combatant: true,
     },
     creature: {
         display: 'Creature',
         short: 'Creature',
-        combatant: false
     },
     pc:   {
         display: 'Player Character',
         short: 'PC',
-        combatant: true,
     },
     lore: {
         display: 'Lore Character',
         short: 'Lore',
-        combatant: false,
     },
 } as const
 
