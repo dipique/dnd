@@ -29,6 +29,7 @@ const entityRouter = (root: string) => {
 }
 
 export const routers = [
-   entityRouter('people'),
-   entityRouter('places'),
-]
+   'people',
+   'places',
+   'encounters'
+].map(entityRouter)

@@ -1,6 +1,6 @@
 import { ActionIcon, Center, Navbar, Title } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
-import { Location, MoodBoy } from 'tabler-icons-react'
+import { Location, MoodBoy, Swords } from 'tabler-icons-react'
 import { AppContext } from './App'
 
 const hoverHighlight = 'rgba(147, 147, 147, 0.1)'
@@ -23,5 +23,6 @@ export const AppNavbar = () => {
     return <Navbar width={{ base: 150 }} p='md'>
         <NavbarOption icon={<MoodBoy size={40} />} label='people' />
         <NavbarOption icon={<Location size={40} />} label='places' />
+        <NavbarOption icon={<Swords size={40} />} label='encounters' />
     </Navbar>
 }

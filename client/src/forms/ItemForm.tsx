@@ -7,7 +7,7 @@ import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { getPropAssociations } from '../meta/TypeAssociation'
 import { FldOpts } from './FormGroupCfg'
 import { DbItem } from '../db/Faunadb'
-import { IItemCollection } from '../DbWrapper'
+import { IItemCollection } from '../entities'
 import { ItemLinks } from './ItemLinks'
 
 export type ItemFormProps<T extends DbItem> = {
@@ -32,7 +32,7 @@ export const ItemForm = <T extends DbItem>({
 
     const fieldCfg = useMemo(() => Object.entries(col.formGrpCfg).map(([key, cfg]) => {
         const prop = key as keyof T
-        const fldOpts = { ...new FldOpts, ...cfg } as FldOpts
+        const fldOpts = { ...new FldOpts, ...(cfg as any)} as FldOpts
         fldOpts.label = fldOpts.label ?? key
         let { render, span, label, placeholder, required } = fldOpts
         const blank = col.getNew()
@@ -51,7 +51,7 @@ export const ItemForm = <T extends DbItem>({
                     key: prop,
                     ...form.getInputProps(prop),
                     label, placeholder, required,
-                    ref: (cfg?.initFocus ? ref : undefined),
+                    ref: ((cfg as any)?.initFocus ? ref : undefined),
                 })}
             </Grid.Col>
         }
@@ -122,7 +122,7 @@ export const ItemForm = <T extends DbItem>({
                     size='md'
                     data={Object.entries(col.types).map(([key, pt]) => ({
                         value: key,
-                        label: pt.short.toLowerCase()
+                        label: (pt as any).short.toLowerCase()
                     }))}
                     {...form.getInputProps('type')}
                     onChange={v => onTypeChange(v as keyof T)}

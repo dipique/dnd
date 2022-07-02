@@ -1,60 +1,38 @@
-import { createContext, FC, useMemo } from 'react'
+import { createContext, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { showNotification } from '@mantine/notifications'
-import { Location, MoodBoy } from 'tabler-icons-react'
-import { IDbActions, DbItem, useItemDb } from './db/Faunadb'
-import { Person, Place, PersonTypes, PlaceTypes, IItemType, ItemTypes } from './entities'
+import { Location, MoodBoy, Swords } from 'tabler-icons-react'
+import { DbItem, useItemDb } from './db/Faunadb'
 import {
-    FormGroupCfg,
-    ItemTableColumnDef,
-    ItemFormProps,
-
-    PlaceForm,
-    PlaceFormGrpCfg,
-    PersonForm,
-    PersonFormGrpCfg
+    IItemCollection,
+    Person, PersonTypes,
+    Place,  PlaceTypes,
+    Encounter, EncounterTypes,
+} from './entities'
+import {
+    PlaceForm, PlaceFormGrpCfg,
+    PersonForm, PersonFormGrpCfg,
+    EncounterForm, EncounterFormGrpCfg,
 } from './forms'
 
-export interface ICollection {
-    name: string
-    singular: string
-    icon: JSX.Element,
-    types: ItemTypes
-}
-
-export interface IItemCollection<T extends DbItem> extends ICollection {
-    getNew: () => T
-    useDbHook: () => IDbActions<T>
-    getId: (item: T) => string,
-    getTitle: (item: T) => string,
-    items: T[]
-    dbStatus: string
-    dbFetching: boolean
-    formGrpCfg: FormGroupCfg<T>
-    getType: (item: T) => IItemType
-    columns: ItemTableColumnDef<T>[]
-    applyFilter?: (item: T, filter: any) => boolean
-    renderForm: FC<ItemFormProps<T>>
-    useDb: () => IDbActions<T>
-    types: ItemTypes
-}
-
-export interface IFindItemResult {
-    item: DbItem
+export interface IFindItemResult<T extends DbItem> {
+    item: T
     id: string
     collection: string
 }
 
+export const DbContext = createContext<IDbContext>({} as IDbContext)
+export const usePersonDb = () => useItemDb<Person>('people', () => new Person())
+export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())
+export const useEncounterDb = () => useItemDb<Encounter>('encounters', () => new Encounter())
+
 export interface IDbContext {
     peopleCol: IItemCollection<Person>
     placesCol: IItemCollection<Place>
-    findItemById: (id: string) => IFindItemResult | undefined
+    encountersCol: IItemCollection<Encounter>
+    findItemById: <T extends DbItem>(id: string) => IFindItemResult<T> | undefined
 }
 
-export const DbContext = createContext<IDbContext>({} as IDbContext)
-
-export const usePersonDb = () => useItemDb<Person>('people', () => new Person())
-export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())
 
 export const DbWrapper = (props: any) => {
     const getItems = <T extends DbItem>(getAll: () => Promise<T[]>, colName: string) => async () => {
@@ -74,6 +52,8 @@ export const DbWrapper = (props: any) => {
     const pplQry = useQuery('people', getItems(pplDb.getAll, 'people'))
     const plDb = usePlaceDb()
     const plQry = useQuery('places', getItems(plDb.getAll, 'places'))
+    const enDb = useEncounterDb()
+    const enQry = useQuery('encounters', getItems(enDb.getAll, 'encounters'))
 
     const peopleCol: IItemCollection<Person> = useMemo(() => ({
         name: 'people',
@@ -110,22 +90,46 @@ export const DbWrapper = (props: any) => {
         getType: (p: Place) => PlaceTypes[p.type],
         columns: [ {
             name: 'location',
-            value: (p, col) => p.location ? col.getTitle(col.items.find(i => i.id === p.location)!) : ''
+            value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
         } ],
         renderForm: PlaceForm,
         useDb: usePlaceDb,
     }), [plQry])
 
+    const encountersCol: IItemCollection<Encounter> = useMemo(() => ({
+        name: 'encounters',
+        singular: 'encounter',
+        getNew: () => new Encounter(),
+        useDbHook: useEncounterDb,
+        getId: (p: Encounter) => `${p.type}_${p.name}`,
+        getTitle: (p: Encounter) => `${EncounterTypes[p.type].short}: ${p.name}`,
+        icon: <Swords />,
+        items: enQry.data || [],
+        dbStatus: enQry.status,
+        dbFetching: enQry.isFetching,
+        types: EncounterTypes,
+        formGrpCfg: EncounterFormGrpCfg,
+        getType: (p: Encounter) => EncounterTypes[p.type],
+        columns: [ {
+            name: 'location',
+            value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
+        } ],
+        renderForm: EncounterForm,
+        useDb: useEncounterDb,
+    }), [enQry])
+
     const findItemById = useMemo(() =>
-        (id: string) => {
+        <T extends DbItem>(id: string): IFindItemResult<T> | undefined => {
             if (!id) return undefined
             const person = peopleCol.items.find(p => p.id === id)
-            if (person) return { item: person, id, collection: 'people' }
+            if (person) return { item: person as T, id, collection: 'people' }
             const place = placesCol.items.find(p => p.id === id)
-            if (place) return { item: place, id, collection: 'places' }
+            if (place) return { item: place as T, id, collection: 'places' }
+            const encounter = encountersCol.items.find(p => p.id === id)
+            if (encounter) return { item: encounter as T, id, collection: 'encounters' }
             return undefined
         }
     , [peopleCol, placesCol])
 
-    return <DbContext.Provider value={{ peopleCol, placesCol, findItemById }} children={props.children} />
+    return <DbContext.Provider value={{ peopleCol, placesCol, encountersCol, findItemById }} children={props.children} />
 }

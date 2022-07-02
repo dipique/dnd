@@ -7,8 +7,8 @@ import { useSpotlight } from '@mantine/spotlight'
 import { SquarePlus } from 'tabler-icons-react'
 
 import { DbItem } from '../db/Faunadb'
-import { IItemCollection } from '../DbWrapper'
 import { ItemTable, ItemFilters, ItemForm } from '../forms'
+import { IItemCollection } from '../entities'
 
 export const AppPage = <T extends DbItem>({
     col

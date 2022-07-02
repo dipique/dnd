@@ -1,13 +1,14 @@
 import { ActionIcon, Anchor, Table } from '@mantine/core'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { SquareX } from 'tabler-icons-react'
 import { DbItem } from '../db/Faunadb'
-import { IItemCollection } from '../DbWrapper'
+import { DbContext, IDbContext } from '../DbWrapper'
+import { IItemCollection } from '../entities'
 
 export interface ItemTableColumnDef<T extends DbItem> {
     name: string
     header?: string | JSX.Element
-    value?: (item: T, col: IItemCollection<T>) => string | JSX.Element
+    value?: (item: T, col: IItemCollection<T>, ctx: IDbContext) => string | JSX.Element
 }
 
 export type ItemTableProps<T extends DbItem> = {
@@ -31,6 +32,8 @@ export const ItemTable = <T extends DbItem>({
         : collection.items
     ), [collection, filters])
 
+    const ctx = useContext(DbContext)
+
     const ths = <tr>
           <th>type</th>
           <th>name</th>
@@ -42,7 +45,7 @@ export const ItemTable = <T extends DbItem>({
         <tr key={item.id}>
             <td>{collection.getType(item).short}</td>
             <td><Anchor onClick={() => onItemClick?.(item.id)}>{item.name}</Anchor></td>
-            {collection.columns.map(c => <td key={c.name}>{c.value ? c.value(item, collection) : (item as any)[c.name]}</td>)}
+            {collection.columns.map(c => <td key={c.name}>{c.value ? c.value(item, collection, ctx) : (item as any)[c.name]}</td>)}
             <td width={32}>
                 <ActionIcon onClick={() => deleteItem?.(item.id)} color='red'>
                     <SquareX />

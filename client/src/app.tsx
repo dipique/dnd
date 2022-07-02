@@ -4,7 +4,7 @@ import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-reac
 import { AppShell } from '@mantine/core'
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
-import { People, Places } from './pages/EntityPages'
+import { Encounters, People, Places } from './pages/EntityPages'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
 import { DbWrapper } from './DbWrapper'
@@ -33,6 +33,7 @@ export const App = () => {
         {
             case 'people': return <People />
             case 'places': return <Places />
+            case 'encounters': return <Encounters />
             default: return <div>Invalid page</div>
         }
     }

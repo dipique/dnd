@@ -1,7 +1,8 @@
 import { useContext, useMemo } from 'react'
 import { Select } from '@mantine/core'
 import { DbItem } from '../db/Faunadb'
-import { DbContext, ICollection, IItemCollection } from '../DbWrapper'
+import { DbContext } from '../DbWrapper'
+import { ICollection, IItemCollection } from '../entities'
 
 export const ItemInput = ({ collection = '', readOnly = false, idsToExclude = [], ...rest }: any) => {
     const { placesCol, peopleCol } = useContext(DbContext)

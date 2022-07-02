@@ -1,10 +1,11 @@
 import { FormGroupCfg } from './FormGroupCfg'
 import { ItemTableColumnDef, ItemTable } from './ItemTable'
 import { ItemFormProps, ItemForm } from './ItemForm'
+import { ItemFilters } from './ItemFilters'
 
 import { PlaceForm, PlaceFormGrpCfg } from './PlaceForm'
-import { ItemFilters } from './ItemFilters'
 import { PersonForm, PersonFormGrpCfg } from './PersonForm'
+import { EncounterForm, EncounterFormGrpCfg } from './EncounterForm'
 
 export {
     FormGroupCfg,
@@ -16,6 +17,10 @@ export {
 
     PlaceForm,
     PlaceFormGrpCfg,
+
     PersonForm,
-    PersonFormGrpCfg
+    PersonFormGrpCfg,
+
+    EncounterForm,
+    EncounterFormGrpCfg,
 }
