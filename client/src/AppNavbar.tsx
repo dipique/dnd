@@ -1,7 +1,7 @@
 import { ActionIcon, Center, Navbar, Title } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
 import { Location, MoodBoy } from 'tabler-icons-react'
-import { AppContext } from './app'
+import { AppContext } from './App'
 
 const hoverHighlight = 'rgba(147, 147, 147, 0.1)'
 const optionBaseStyle = { padding: '8px' }

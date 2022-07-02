@@ -6,7 +6,7 @@ import { SpotlightProvider, SpotlightAction } from '@mantine/spotlight'
 import { NotificationsProvider } from '@mantine/notifications'
 import { getActions, slIconSize } from './SpotlightActions'
 
-import { AppContext } from './app'
+import { AppContext } from './App'
 
 export const UIWrapper = (props: any) => {
     const ctx = useContext(AppContext)
