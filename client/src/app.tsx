@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-react'
 import { AppShell } from '@mantine/core'
@@ -7,7 +7,10 @@ import { AppNavbar } from './AppNavbar'
 import { Encounters, People, Places } from './pages/EntityPages'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
-import { DbWrapper } from './DbWrapper'
+import { DbContext, DbWrapper } from './DbWrapper'
+import { DbItem } from './db/Faunadb'
+import { Encounter, Person, Place } from './entities'
+import { AppPage } from './pages/AppPage'
 
 export interface IAppContext {
     activePage: string
@@ -31,9 +34,9 @@ export const App = () => {
             return <LoggedOut />
         switch(activePage)
         {
-            case 'people': return <People />
-            case 'places': return <Places />
-            case 'encounters': return <Encounters />
+            case 'people': return <AppPage<Person> col={useContext(DbContext).peopleCol} />
+            case 'places': return <AppPage<Place> col={useContext(DbContext).placesCol} />
+            case 'encounters': return <AppPage<Encounter> col={useContext(DbContext).encountersCol} />
             default: return <div>Invalid page</div>
         }
     }
