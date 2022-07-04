@@ -4,12 +4,10 @@ import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-reac
 import { AppShell } from '@mantine/core'
 import { AppHeader } from './AppHeader'
 import { AppNavbar } from './AppNavbar'
-import { Encounters, People, Places } from './pages/EntityPages'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
 import { DbContext, DbWrapper } from './DbWrapper'
-import { DbItem } from './db/Faunadb'
-import { Encounter, Person, Place } from './entities'
+import { Encounter, Person, Place, Session } from './entities'
 import { AppPage } from './pages/AppPage'
 
 export interface IAppContext {
@@ -37,6 +35,7 @@ export const App = () => {
             case 'people': return <AppPage<Person> col={useContext(DbContext).peopleCol} />
             case 'places': return <AppPage<Place> col={useContext(DbContext).placesCol} />
             case 'encounters': return <AppPage<Encounter> col={useContext(DbContext).encountersCol} />
+            case 'sessions': return <AppPage<Session> col={useContext(DbContext).sessionsCol} />
             default: return <div>Invalid page</div>
         }
     }

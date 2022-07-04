@@ -9,9 +9,10 @@ export interface SessionEvent {
 
 export class Session extends DbItem  {
     type: SessionTypeKey = DefaultSessionType
-    startLocation?: string = ''
+    date?: Date
+    startLocation: string = ''
     events: SessionEvent[] = []   
-    description?: string = ''
+    summary: string = ''
     
     notes?: string = ''
 }

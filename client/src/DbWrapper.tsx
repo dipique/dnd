@@ -1,18 +1,21 @@
 import { createContext, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { showNotification } from '@mantine/notifications'
-import { Location, MoodBoy, Swords } from 'tabler-icons-react'
+import { CalendarEvent, Location, MoodBoy, Swords } from 'tabler-icons-react'
 import { DbItem, useItemDb } from './db/Faunadb'
-import { ItemCollection} from './entities'
 import {
+    ItemCollection,
+
     Person, PersonTypes,
     Place,  PlaceTypes,
     Encounter, EncounterTypes,
+    Session, SessionTypes,
 } from './entities'
 import {
     PlaceForm, PlaceFormGrpCfg,
     PersonForm, PersonFormGrpCfg,
     EncounterForm, EncounterFormGrpCfg,
+    SessionForm, SessionFormGrpCfg,
 } from './forms'
 
 export interface IFindItemResult<T extends DbItem> {
@@ -27,6 +30,7 @@ export interface IDbContext {
     peopleCol: ItemCollection<Person>
     placesCol: ItemCollection<Place>
     encountersCol: ItemCollection<Encounter>
+    sessionsCol: ItemCollection<Session>
     findItemById: <T extends DbItem>(id: string) => IFindItemResult<T> | undefined
 }
 
@@ -89,6 +93,21 @@ export const DbWrapper = (props: any) => {
         renderForm: EncounterForm,
     }, enQry), [enQry])
 
+    const sesQry = getQry('sessions', () => new Session())
+    const sessionsCol = useMemo(() => new ItemCollection<Session>({
+        name: 'sessions',
+        singular: 'session',
+        getNew: () => new Session(),
+        icon: <CalendarEvent />,
+        types: SessionTypes,
+        formGrpCfg: SessionFormGrpCfg,
+        columns: [ {
+            name: 'location',
+            value: (p, col, ctx) => p.startLocation ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.startLocation)?.item!) : '',
+        } ],
+        renderForm: SessionForm,
+    }, sesQry), [sesQry])
+
     const findItemById = useMemo(() =>
         <T extends DbItem>(id: string): IFindItemResult<T> | undefined => {
             if (!id) return undefined
@@ -102,5 +121,5 @@ export const DbWrapper = (props: any) => {
         }
     , [peopleCol, placesCol, encountersCol])
 
-    return <DbContext.Provider value={{ peopleCol, placesCol, encountersCol, findItemById }} children={props.children} />
+    return <DbContext.Provider value={{ peopleCol, placesCol, encountersCol, sessionsCol, findItemById }} children={props.children} />
 }
