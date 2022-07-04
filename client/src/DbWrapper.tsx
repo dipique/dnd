@@ -22,9 +22,6 @@ export interface IFindItemResult<T extends DbItem> {
 }
 
 export const DbContext = createContext<IDbContext>({} as IDbContext)
-export const usePersonDb = () => useItemDb<Person>('people', () => new Person())
-export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())
-export const useEncounterDb = () => useItemDb<Encounter>('encounters', () => new Encounter())
 
 export interface IDbContext {
     peopleCol: ItemCollection<Person>
@@ -32,7 +29,6 @@ export interface IDbContext {
     encountersCol: ItemCollection<Encounter>
     findItemById: <T extends DbItem>(id: string) => IFindItemResult<T> | undefined
 }
-
 
 export const DbWrapper = (props: any) => {
     const getItems = <T extends DbItem>(getAll: () => Promise<T[]>, colName: string) => async () => {
@@ -47,14 +43,11 @@ export const DbWrapper = (props: any) => {
             return []
         }
     }
+    
+    const getQry = <T extends DbItem>(name: string, getNew: () => T) =>
+        useQuery(name, getItems(useItemDb<T>(name, getNew).getAll, name))
 
-    const pplDb = usePersonDb()
-    const pplQry = useQuery('people', getItems(pplDb.getAll, 'people'))
-    const plDb = usePlaceDb()
-    const plQry = useQuery('places', getItems(plDb.getAll, 'places'))
-    const enDb = useEncounterDb()
-    const enQry = useQuery('encounters', getItems(enDb.getAll, 'encounters'))
-
+    const pplQry = getQry('people', () => new Person())
     const peopleCol = useMemo(() => new ItemCollection<Person>({
         name: 'people',
         singular: 'person',
@@ -64,9 +57,9 @@ export const DbWrapper = (props: any) => {
         formGrpCfg: PersonFormGrpCfg,
         columns: [ { name: 'race' } ],
         renderForm: PersonForm,
-        useDb: usePersonDb,
     }, pplQry), [ pplQry ])
-
+    
+    const plQry = getQry('places', () => new Place())
     const placesCol = useMemo(() => new ItemCollection<Place> ({
         name: 'places',
         singular: 'place',
@@ -79,9 +72,9 @@ export const DbWrapper = (props: any) => {
             value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
         } ],
         renderForm: PlaceForm,
-        useDb: usePlaceDb,
     }, plQry), [plQry])
 
+    const enQry = getQry('encounters', () => new Encounter())
     const encountersCol = useMemo(() => new ItemCollection<Encounter>({
         name: 'encounters',
         singular: 'encounter',
@@ -94,7 +87,6 @@ export const DbWrapper = (props: any) => {
             value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
         } ],
         renderForm: EncounterForm,
-        useDb: useEncounterDb,
     }, enQry), [enQry])
 
     const findItemById = useMemo(() =>
@@ -108,7 +100,7 @@ export const DbWrapper = (props: any) => {
             if (encounter) return { item: encounter as T, id, collection: 'encounters' }
             return undefined
         }
-    , [peopleCol, placesCol])
+    , [peopleCol, placesCol, encountersCol])
 
     return <DbContext.Provider value={{ peopleCol, placesCol, encountersCol, findItemById }} children={props.children} />
 }

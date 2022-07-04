@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { UseQueryResult } from 'react-query'
-import { DbItem, IDbActions } from '../db/Faunadb'
+import { DbItem, IDbActions, useItemDb } from '../db/Faunadb'
 import { FormGroupCfg, ItemFormProps, ItemTableColumnDef } from '../forms'
 import { IItemType, ItemTypes } from './ItemTypes'
 
@@ -20,7 +20,6 @@ export interface RequiredItemCollectionProps<T extends DbItem> extends ICollecti
     formGrpCfg  : FormGroupCfg<T>
     columns     : ItemTableColumnDef<T>[]
     renderForm  : FC<ItemFormProps<T>>
-    useDb       : () => IDbActions<T>
 }
 
 export type ItemCollectionProps<T extends DbItem> = RequiredItemCollectionProps<T> & Partial<ItemCollection<T>>
@@ -55,10 +54,11 @@ export class ItemCollection<T extends DbItem>
         this.formGrpCfg = props.formGrpCfg
         this.columns    = props.columns
         this.renderForm = props.renderForm
-        this.useDb      = props.useDb
         this.items      = qryResult.data || []
         this.dbStatus   = qryResult.status
         this.dbFetching = qryResult.isFetching
+
+        this.useDb      = () => useItemDb<T>(this.name, this.getNew)
 
         Object.assign(this, props)
     }
