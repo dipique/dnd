@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { UseQueryResult } from 'react-query'
 import { DbItem, IDbActions } from '../db/Faunadb'
 import { FormGroupCfg, ItemFormProps, ItemTableColumnDef } from '../forms'
 import { IItemType, ItemTypes } from './ItemTypes'
@@ -10,35 +11,58 @@ export interface ICollection {
     types: ItemTypes
 }
 
-export class RequiredItemCollectionProps<T extends DbItem> {
-    name: string      = ''
-    singular: string  = ''
-    icon: JSX.Element = <></>
-    types: ItemTypes  = {}
-    getNew: ()        => T = () => ({} as T)
-    formGrpCfg: FormGroupCfg<T> = {}
-    items: T[]        = [] // try to remove
-    dbStatus: string  = '' // try to remove
-    dbFetching: boolean = false // try to remove
-    columns: ItemTableColumnDef<T>[] = []
-    renderForm: FC<ItemFormProps<T>> = () => <></>
-    useDbHook: () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
-    useDb: () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
+export interface RequiredItemCollectionProps<T extends DbItem> {
+    name        : string
+    singular    : string
+    icon        : JSX.Element
+    types       : ItemTypes
+    getNew      : () => T
+    formGrpCfg  : FormGroupCfg<T>
+    columns     : ItemTableColumnDef<T>[]
+    renderForm  : FC<ItemFormProps<T>>
+    useDbHook   : () => IDbActions<T>
+    useDb       : () => IDbActions<T>
 }
 
 export type ItemCollectionProps<T extends DbItem> = RequiredItemCollectionProps<T> & Partial<ItemCollection<T>>
 
 export class ItemCollection<T extends DbItem>
-       extends RequiredItemCollectionProps<T>
-       implements ICollection
+       implements ICollection, RequiredItemCollectionProps<T>
 {
-    getId:       (item: T) => string = (item) => `${item.type}_${item.name}`
-    getTitle:    (item: T) => string = (p: T) => `${this.types[p.type].short}: ${p.name}`
-    getType:     (item: T) => IItemType = item => this.types[item.type]
-    applyFilter: (item: T, filter: any) => boolean = (p, filter) => !filter?.type || p.type === filter.type
+    name        : string
+    singular    : string
+    icon        : JSX.Element
+    types       : ItemTypes
+    getNew      : () => T
+    formGrpCfg  : FormGroupCfg<T>
+    columns     : ItemTableColumnDef<T>[]
+    renderForm  : FC<ItemFormProps<T>>
+    items       : T[] = [] // try to remove
+    dbStatus    : string  = '' // try to remove
+    dbFetching  : boolean = false // try to remove
+    useDbHook   : () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
+    useDb       : () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
 
-    constructor(props: ItemCollectionProps<T>) {
-        super()
+    getId       : (item: T)              => string = (item) => `${item.type}_${item.name}`
+    getTitle    : (item: T)              => string = (p: T) => `${this.types[p.type].short}: ${p.name}`
+    getType     : (item: T)              => IItemType = item => this.types[item.type]
+    applyFilter : (item: T, filter: any) => boolean = (p, filter) => !filter?.type || p.type === filter.type
+
+    constructor(props: ItemCollectionProps<T>, qryResult: UseQueryResult<T[], unknown>) {
+        this.name       = props.name
+        this.singular   = props.singular
+        this.icon       = props.icon
+        this.types      = props.types
+        this.getNew     = props.getNew
+        this.formGrpCfg = props.formGrpCfg
+        this.columns    = props.columns
+        this.renderForm = props.renderForm
+        this.useDbHook  = props.useDbHook
+        this.useDb      = props.useDb
+        this.items      = qryResult.data || []
+        this.dbStatus   = qryResult.status
+        this.dbFetching = qryResult.isFetching
+
         Object.assign(this, props)
     }
 }

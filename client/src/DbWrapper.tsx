@@ -61,15 +61,12 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Person(),
         useDbHook: usePersonDb,
         icon: <MoodBoy />,
-        items: pplQry.data || [],
-        dbStatus: pplQry.status,
-        dbFetching: pplQry.isFetching,
         types: PersonTypes,
         formGrpCfg: PersonFormGrpCfg,
         columns: [ { name: 'race' } ],
         renderForm: PersonForm,
         useDb: usePersonDb,
-    }), [ pplQry ])
+    }, pplQry), [ pplQry ])
 
     const placesCol = useMemo(() => new ItemCollection<Place> ({
         name: 'places',
@@ -77,9 +74,6 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Place(),
         useDbHook: usePlaceDb,
         icon: <Location />,
-        items: plQry.data || [],
-        dbStatus: plQry.status,
-        dbFetching: plQry.isFetching,
         types: PlaceTypes,
         formGrpCfg: PlaceFormGrpCfg,
         columns: [ {
@@ -88,7 +82,7 @@ export const DbWrapper = (props: any) => {
         } ],
         renderForm: PlaceForm,
         useDb: usePlaceDb,
-    }), [plQry])
+    }, plQry), [plQry])
 
     const encountersCol = useMemo(() => new ItemCollection<Encounter>({
         name: 'encounters',
@@ -96,9 +90,6 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Encounter(),
         useDbHook: useEncounterDb,
         icon: <Swords />,
-        items: enQry.data || [],
-        dbStatus: enQry.status,
-        dbFetching: enQry.isFetching,
         types: EncounterTypes,
         formGrpCfg: EncounterFormGrpCfg,
         columns: [ {
@@ -107,7 +98,7 @@ export const DbWrapper = (props: any) => {
         } ],
         renderForm: EncounterForm,
         useDb: useEncounterDb,
-    }), [enQry])
+    }, enQry), [enQry])
 
     const findItemById = useMemo(() =>
         <T extends DbItem>(id: string): IFindItemResult<T> | undefined => {
