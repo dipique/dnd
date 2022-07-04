@@ -8,11 +8,11 @@ import { SquarePlus } from 'tabler-icons-react'
 
 import { DbItem } from '../db/Faunadb'
 import { ItemTable, ItemFilters, ItemForm } from '../forms'
-import { IItemCollection } from '../entities'
+import { ItemCollection } from '../entities'
 
 export const AppPage = <T extends DbItem>({
     col
-} : { col: IItemCollection<T> }) => {
+} : { col: ItemCollection<T> }) => {
     const { name, singular, useDbHook, getTitle, getId, icon, items } = col
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')

@@ -3,18 +3,18 @@ import { useContext, useMemo } from 'react'
 import { SquareX } from 'tabler-icons-react'
 import { DbItem } from '../db/Faunadb'
 import { DbContext, IDbContext } from '../DbWrapper'
-import { IItemCollection } from '../entities'
+import { ItemCollection } from '../entities'
 
 export interface ItemTableColumnDef<T extends DbItem> {
     name: string
     header?: string | JSX.Element
-    value?: (item: T, col: IItemCollection<T>, ctx: IDbContext) => string | JSX.Element
+    value?: (item: T, col: ItemCollection<T>, ctx: IDbContext) => string | JSX.Element
 }
 
 export type ItemTableProps<T extends DbItem> = {
     deleteItem: (id: string) => Promise<void>,
     onItemClick: (id: string) => void,
-    collection: IItemCollection<T>
+    collection: ItemCollection<T>
     filters?: any
 }
 
@@ -25,10 +25,7 @@ export const ItemTable = <T extends DbItem>({
     filters,
 } : ItemTableProps<T>) => {
     const items = useMemo(() => (filters
-        ? collection.items.filter(i => (
-            collection.applyFilter ||
-            ((p, filter) => !filter?.type || p.type === filter.type) // if no filters provided, filter by type
-          )(i, filters))
+        ? collection.items.filter(i => collection.applyFilter(i, filters))
         : collection.items
     ), [collection, filters])
 

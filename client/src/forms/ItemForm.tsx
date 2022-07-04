@@ -7,12 +7,12 @@ import { UseForm } from '@mantine/hooks/lib/use-form/use-form'
 import { getPropAssociations } from '../meta/TypeAssociation'
 import { FldOpts } from './FormGroupCfg'
 import { DbItem } from '../db/Faunadb'
-import { IItemCollection } from '../entities'
+import { ItemCollection } from '../entities'
 import { ItemLinks } from './ItemLinks'
 
 export type ItemFormProps<T extends DbItem> = {
     item: T
-    col: IItemCollection<T>
+    col: ItemCollection<T>
     saveItem: (item: T) => Promise<void>
     deleteItem: (id: string) => Promise<void>
     closeForm: () => void

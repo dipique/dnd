@@ -3,8 +3,8 @@ import { useQuery } from 'react-query'
 import { showNotification } from '@mantine/notifications'
 import { Location, MoodBoy, Swords } from 'tabler-icons-react'
 import { DbItem, useItemDb } from './db/Faunadb'
+import { ItemCollection} from './entities'
 import {
-    IItemCollection,
     Person, PersonTypes,
     Place,  PlaceTypes,
     Encounter, EncounterTypes,
@@ -27,9 +27,9 @@ export const usePlaceDb = () => useItemDb<Place>('places', () => new Place())
 export const useEncounterDb = () => useItemDb<Encounter>('encounters', () => new Encounter())
 
 export interface IDbContext {
-    peopleCol: IItemCollection<Person>
-    placesCol: IItemCollection<Place>
-    encountersCol: IItemCollection<Encounter>
+    peopleCol: ItemCollection<Person>
+    placesCol: ItemCollection<Place>
+    encountersCol: ItemCollection<Encounter>
     findItemById: <T extends DbItem>(id: string) => IFindItemResult<T> | undefined
 }
 
@@ -55,39 +55,33 @@ export const DbWrapper = (props: any) => {
     const enDb = useEncounterDb()
     const enQry = useQuery('encounters', getItems(enDb.getAll, 'encounters'))
 
-    const peopleCol: IItemCollection<Person> = useMemo(() => ({
+    const peopleCol = useMemo(() => new ItemCollection<Person>({
         name: 'people',
         singular: 'person',
         getNew: () => new Person(),
         useDbHook: usePersonDb,
-        getId: (p: Person) => `${p.type}_${p.name}`,
-        getTitle: (p: Person) => `${PersonTypes[p.type].short}: ${p.name}`,
         icon: <MoodBoy />,
         items: pplQry.data || [],
         dbStatus: pplQry.status,
         dbFetching: pplQry.isFetching,
         types: PersonTypes,
         formGrpCfg: PersonFormGrpCfg,
-        getType: (p: Person) => PersonTypes[p.type],
         columns: [ { name: 'race' } ],
         renderForm: PersonForm,
         useDb: usePersonDb,
     }), [ pplQry ])
 
-    const placesCol: IItemCollection<Place> = useMemo(() => ({
+    const placesCol = useMemo(() => new ItemCollection<Place> ({
         name: 'places',
         singular: 'place',
         getNew: () => new Place(),
         useDbHook: usePlaceDb,
-        getId: (p: Place) => `${p.type}_${p.name}`,
-        getTitle: (p: Place) => `${PlaceTypes[p.type].short}: ${p.name}`,
         icon: <Location />,
         items: plQry.data || [],
         dbStatus: plQry.status,
         dbFetching: plQry.isFetching,
         types: PlaceTypes,
         formGrpCfg: PlaceFormGrpCfg,
-        getType: (p: Place) => PlaceTypes[p.type],
         columns: [ {
             name: 'location',
             value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
@@ -96,20 +90,17 @@ export const DbWrapper = (props: any) => {
         useDb: usePlaceDb,
     }), [plQry])
 
-    const encountersCol: IItemCollection<Encounter> = useMemo(() => ({
+    const encountersCol = useMemo(() => new ItemCollection<Encounter>({
         name: 'encounters',
         singular: 'encounter',
         getNew: () => new Encounter(),
         useDbHook: useEncounterDb,
-        getId: (p: Encounter) => `${p.type}_${p.name}`,
-        getTitle: (p: Encounter) => `${EncounterTypes[p.type].short}: ${p.name}`,
         icon: <Swords />,
         items: enQry.data || [],
         dbStatus: enQry.status,
         dbFetching: enQry.isFetching,
         types: EncounterTypes,
         formGrpCfg: EncounterFormGrpCfg,
-        getType: (p: Encounter) => EncounterTypes[p.type],
         columns: [ {
             name: 'location',
             value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',

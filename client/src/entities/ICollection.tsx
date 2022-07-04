@@ -10,18 +10,35 @@ export interface ICollection {
     types: ItemTypes
 }
 
-export interface IItemCollection<T extends DbItem> extends ICollection {
-    getNew: () => T
-    useDbHook: () => IDbActions<T>
-    getId: (item: T) => string,
-    getTitle: (item: T) => string,
-    items: T[]
-    dbStatus: string
-    dbFetching: boolean
-    formGrpCfg: FormGroupCfg<T>
-    getType: (item: T) => IItemType
-    columns: ItemTableColumnDef<T>[]
-    applyFilter?: (item: T, filter: any) => boolean
-    renderForm: FC<ItemFormProps<T>>
-    useDb: () => IDbActions<T>
+export class RequiredItemCollectionProps<T extends DbItem> {
+    name: string      = ''
+    singular: string  = ''
+    icon: JSX.Element = <></>
+    types: ItemTypes  = {}
+    getNew: ()        => T = () => ({} as T)
+    formGrpCfg: FormGroupCfg<T> = {}
+    items: T[]        = [] // try to remove
+    dbStatus: string  = '' // try to remove
+    dbFetching: boolean = false // try to remove
+    columns: ItemTableColumnDef<T>[] = []
+    renderForm: FC<ItemFormProps<T>> = () => <></>
+    useDbHook: () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
+    useDb: () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
+}
+
+export type ItemCollectionProps<T extends DbItem> = RequiredItemCollectionProps<T> & Partial<ItemCollection<T>>
+
+export class ItemCollection<T extends DbItem>
+       extends RequiredItemCollectionProps<T>
+       implements ICollection
+{
+    getId:       (item: T) => string = (item) => `${item.type}_${item.name}`
+    getTitle:    (item: T) => string = (p: T) => `${this.types[p.type].short}: ${p.name}`
+    getType:     (item: T) => IItemType = item => this.types[item.type]
+    applyFilter: (item: T, filter: any) => boolean = (p, filter) => !filter?.type || p.type === filter.type
+
+    constructor(props: ItemCollectionProps<T>) {
+        super()
+        Object.assign(this, props)
+    }
 }

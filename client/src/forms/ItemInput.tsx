@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react'
 import { Select } from '@mantine/core'
 import { DbItem } from '../db/Faunadb'
 import { DbContext } from '../DbWrapper'
-import { ICollection, IItemCollection } from '../entities'
+import { ICollection, ItemCollection } from '../entities'
 
 export const ItemInput = ({ collection = '', readOnly = false, idsToExclude = [], ...rest }: any) => {
     const { placesCol, peopleCol } = useContext(DbContext)
@@ -10,7 +10,7 @@ export const ItemInput = ({ collection = '', readOnly = false, idsToExclude = []
     // return collection items IF there is no collection filter OR the filter matches the collection
     const includeColResults = (col: ICollection) => !collection || collection === col.name
 
-    const getColItems = <T extends DbItem>(col: IItemCollection<T>) =>
+    const getColItems = <T extends DbItem>(col: ItemCollection<T>) =>
         includeColResults(col) ? col.items.filter(i => !idsToExclude.includes(i.id)).map(i => ({
             collection: col.name,
             group: `${col.name} - ${i.type}`,
