@@ -10,19 +10,19 @@ export const AppNavbar = () => {
     const [ hoverPage, setHoverPage ] = useState('')
 
     const NavbarOption: FC<{ icon: JSX.Element, label: string }> = ({ icon, label }) =>
-        <Center
+        <tr
             style={(hoverPage === label || activePage === label) ? { ...optionBaseStyle, background: hoverHighlight } : optionBaseStyle}
             onMouseOver={() => setHoverPage(label)}
             onMouseOut={() => setHoverPage('')}
             onClick={() => setActivePage(label)}
         >
-            <ActionIcon size='xl'>{icon}</ActionIcon>
-            <Title style={{ marginLeft: '6px'}} order={5}>{label}</Title>
-        </Center>
+            <td><ActionIcon size='xl'>{icon}</ActionIcon></td>
+            <td><Title style={{ marginLeft: '6px'}} order={5}>{label}</Title></td>
+        </tr>
 
-    return <Navbar width={{ base: 150 }} p='md'>
+    return <Navbar width={{ base: 180 }} p='md'><table style={{ borderSpacing: '0' }}><tbody>
         <NavbarOption icon={<MoodBoy size={40} />} label='people' />
         <NavbarOption icon={<Location size={40} />} label='places' />
         <NavbarOption icon={<Swords size={40} />} label='encounters' />
-    </Navbar>
+    </tbody></table></Navbar>
 }
