@@ -11,7 +11,7 @@ export interface ICollection {
     types: ItemTypes
 }
 
-export interface RequiredItemCollectionProps<T extends DbItem> {
+export interface RequiredItemCollectionProps<T extends DbItem> extends ICollection {
     name        : string
     singular    : string
     icon        : JSX.Element
@@ -20,7 +20,6 @@ export interface RequiredItemCollectionProps<T extends DbItem> {
     formGrpCfg  : FormGroupCfg<T>
     columns     : ItemTableColumnDef<T>[]
     renderForm  : FC<ItemFormProps<T>>
-    useDbHook   : () => IDbActions<T>
     useDb       : () => IDbActions<T>
 }
 
@@ -37,11 +36,10 @@ export class ItemCollection<T extends DbItem>
     formGrpCfg  : FormGroupCfg<T>
     columns     : ItemTableColumnDef<T>[]
     renderForm  : FC<ItemFormProps<T>>
-    items       : T[] = [] // try to remove
-    dbStatus    : string  = '' // try to remove
-    dbFetching  : boolean = false // try to remove
-    useDbHook   : () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
-    useDb       : () => IDbActions<T> = () => ({} as IDbActions<T>) // try to remove
+    items       : T[]
+    dbStatus    : string
+    dbFetching  : boolean
+    useDb       : () => IDbActions<T>
 
     getId       : (item: T)              => string = (item) => `${item.type}_${item.name}`
     getTitle    : (item: T)              => string = (p: T) => `${this.types[p.type].short}: ${p.name}`
@@ -57,7 +55,6 @@ export class ItemCollection<T extends DbItem>
         this.formGrpCfg = props.formGrpCfg
         this.columns    = props.columns
         this.renderForm = props.renderForm
-        this.useDbHook  = props.useDbHook
         this.useDb      = props.useDb
         this.items      = qryResult.data || []
         this.dbStatus   = qryResult.status

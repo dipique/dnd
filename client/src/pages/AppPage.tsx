@@ -13,10 +13,10 @@ import { ItemCollection } from '../entities'
 export const AppPage = <T extends DbItem>({
     col
 } : { col: ItemCollection<T> }) => {
-    const { name, singular, useDbHook, getTitle, getId, icon, items } = col
+    const { name, singular, useDb, getTitle, getId, icon, items } = col
     const [ showDialog, setShowDialog ] = useState(false)
     const [ itemId, setItemId ] = useState('')
-    const { save, getAll, remove } = useDbHook()
+    const { save, getAll, remove } = useDb()
     const [ filters, setFilters ] = useState<any>({ type: '' })
 
     const closeForm = () => setShowDialog(false)
