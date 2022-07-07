@@ -1,12 +1,7 @@
 import { createContext, useContext, useState } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { LogoutOptions, RedirectLoginOptions, useAuth0 } from '@auth0/auth0-react'
-import { AppShell } from '@mantine/core'
-import { AppHeader } from './AppHeader'
-import { AppNavbar } from './AppNavbar'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
-import { DbContext, DbWrapper } from './DbWrapper'
+import { DbContext } from './DbWrapper'
 import { Encounter, Person, Place, Session } from './entities'
 import { AppPage } from './pages/AppPage'
 import { AuthContext } from './AuthWrapper'
@@ -20,6 +15,7 @@ export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App = () => {
     const { isAuthenticated } = useContext(AuthContext)
+    
     const [ activePage, setActivePage ] = useState('people')
 
     const ActivePage = () => {

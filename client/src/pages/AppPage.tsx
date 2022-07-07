@@ -78,7 +78,7 @@ export const AppPage = <T extends DbItem>({
                 setItemId(p.id)
                 showForm()
             },
-            icon: icon,
+            icon: icon(),
         }))
         registerActions(actions)
         return () => removeActions(actions.map(p => p.id))

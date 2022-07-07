@@ -1,13 +1,14 @@
-import { ActionIcon, Center, Navbar, Title } from '@mantine/core'
+import { ActionIcon, Navbar, Title } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
-import { CalendarEvent, Location, MoodBoy, Swords } from 'tabler-icons-react'
 import { AppContext } from './App'
+import { DbContext } from './DbWrapper'
 
 const hoverHighlight = 'rgba(147, 147, 147, 0.1)'
 const optionBaseStyle = { padding: '8px' }
 export const AppNavbar = () => {
     const { activePage, setActivePage } = useContext(AppContext)
     const [ hoverPage, setHoverPage ] = useState('')
+    const { cols } = useContext(DbContext)
 
     const NavbarOption: FC<{ icon: JSX.Element, label: string }> = ({ icon, label }) =>
         <tr
@@ -21,9 +22,6 @@ export const AppNavbar = () => {
         </tr>
 
     return <Navbar width={{ base: 180 }} p='md'><table style={{ borderSpacing: '0' }}><tbody>
-        <NavbarOption icon={<MoodBoy size={40} />} label='people' />
-        <NavbarOption icon={<Location size={40} />} label='places' />
-        <NavbarOption icon={<Swords size={40} />} label='encounters' />
-        <NavbarOption icon={<CalendarEvent size={40} />} label='sessions' />
+        {cols.map(col => <NavbarOption key={col.name} icon={col.icon({size: 40})} label={col.name} />)}
     </tbody></table></Navbar>
 }

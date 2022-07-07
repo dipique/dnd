@@ -7,7 +7,7 @@ import { IItemType, ItemTypes } from './ItemTypes'
 export interface ICollection {
     name        : string
     singular    : string
-    icon        : JSX.Element
+    icon        : (props?: any) => JSX.Element
     types       : ItemTypes
     defType     : string
     dbStatus?   : string
@@ -18,7 +18,7 @@ export interface ICollection {
 export interface RequiredItemCollectionProps<T extends DbItem> extends ICollection {
     name        : string
     singular    : string
-    icon        : JSX.Element
+    icon        : (props?: any) => JSX.Element
     types       : ItemTypes
     getNew      : () => T
     formGrpCfg  : FormGroupCfg<T>
@@ -33,7 +33,7 @@ export class ItemCollection<T extends DbItem>
 {
     name        : string
     singular    : string
-    icon        : JSX.Element
+    icon        : (props?: any) => JSX.Element
     types       : ItemTypes
     defType     : string
     getNew      : () => T

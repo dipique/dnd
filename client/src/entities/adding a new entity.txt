@@ -5,4 +5,4 @@ Steps to add a new entity (with forms and everything)
     Add form entity and add to index.ts
     Add all the things in DbWrapper
     Add new entry to api routes/entities.ts
-    If applicable add a page entry in App.tsx and Navbar.tsx
+    If applicable add a page entry in App.tsx
