@@ -1,11 +1,11 @@
 
 Todo
     create favicon
+    Ability to add or edit an item in a modal
     build a separate session ui--maybe make an active session drawer?
     Add date for Session, add session to encounter
     Create component to modify an array of something; maybe use Links as a starting point?
-    Figure out a way to have a list of collections
-        Or at least generate navbar pages from collection info
+    Create component where type appears before name in a box or something
 
     change required to attribute
     make type filter generic

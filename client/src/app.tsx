@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from 'react'
 import { LoggedOut } from './pages/LoggedOut'
 import { UIWrapper } from './UIWrapper'
 import { DbContext } from './DbWrapper'
-import { Encounter, Person, Place, Session } from './entities'
 import { AppPage } from './pages/AppPage'
 import { AuthContext } from './AuthWrapper'
 
@@ -15,20 +14,16 @@ export const AppContext = createContext<IAppContext>({} as IAppContext)
 
 export const App = () => {
     const { isAuthenticated } = useContext(AuthContext)
+    const { cols } = useContext(DbContext)
     
-    const [ activePage, setActivePage ] = useState('people')
+    const [ activePage, setActivePage ] = useState(cols[0].name)
 
     const ActivePage = () => {
         if (!isAuthenticated)
             return <LoggedOut />
-        switch(activePage)
-        {
-            case 'people': return <AppPage<Person> col={useContext(DbContext).peopleCol} />
-            case 'places': return <AppPage<Place> col={useContext(DbContext).placesCol} />
-            case 'encounters': return <AppPage<Encounter> col={useContext(DbContext).encountersCol} />
-            case 'sessions': return <AppPage<Session> col={useContext(DbContext).sessionsCol} />
-            default: return <div>Invalid page</div>
-        }
+        
+        const col = cols.find(c => c.name === activePage) as any
+        return col?.renderForm ? <AppPage<any> col={col} /> : <div>Invalid page</div>
     }
 
     return <>

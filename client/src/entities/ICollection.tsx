@@ -13,6 +13,7 @@ export interface ICollection {
     dbStatus?   : string
     dbFetching? : boolean
     getNew      : () => DbItem
+    renderForm  : FC<ItemFormProps<any>>
 }
 
 export interface RequiredItemCollectionProps<T extends DbItem> extends ICollection {
