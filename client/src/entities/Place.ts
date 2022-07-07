@@ -18,13 +18,13 @@ export const PlaceTypes = {
         display: 'nation',
         short: 'nation',
     },
-    building:   {
-        display: 'building',
-        short: 'building',
+    shop:   {
+        display: 'shop',
+        short: 'shop',
     },
-    encounter: {
-        display: 'encounter',
-        short: 'encounter',
+    residence:   {
+        display: 'residence',
+        short: 'residence',
     },
     other: {
         display: 'other',
