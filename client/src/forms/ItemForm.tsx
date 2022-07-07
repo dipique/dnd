@@ -131,7 +131,7 @@ export const ItemForm = <T extends DbItem>({
             <Grid gutter='xs'>
                 {fieldCfg.map(f => f(form, itemType as string, initFocusRef))}
             </Grid>
-            <ItemLinks item={item} updateLinks={links => form.setFieldValue('links', links)} style={{ paddingTop: '8px' }} />
+            <ItemLinks item={item} updateList={links => form.setFieldValue('links', links)} style={{ paddingTop: '8px' }} />
             <Group position="apart" mt="md">
                 <Button
                     disabled={formType === 'create'}

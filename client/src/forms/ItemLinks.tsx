@@ -47,11 +47,13 @@ export const ItemLink: FC<{
         idsToExclude={idsToExclude}
     />
 
-export const ItemLinks: FC<{
-    item: DbItem,
-    updateLinks: (links: ILink[]) => void,
-    [k: string]: any,
-}> = ({ item, updateLinks, ...rest }) => {
+export interface LinkListProps<TItem extends DbItem, TListItem> {
+    item: TItem,
+    updateList: (items: TListItem[]) => void,
+    [k: string]: any
+}
+
+export const ItemLinks = <TItem extends DbItem>({ item, updateList, ...rest }: LinkListProps<TItem, ILink>) => {
     const [ links, setLinks ] = useState(item.links || [])
     const { findItemById } = useContext(DbContext)
     const handleItemChange = (collection: string, id: string, description: string) => {
@@ -74,14 +76,14 @@ export const ItemLinks: FC<{
             newLinks[matchIdx] = { collection, id, description}
         }
 
-        updateLinks(newLinks)
+        updateList(newLinks)
         setLinks(newLinks)
     }
 
     const handleItemDelete = (link: ILink) => {
         const newLinks = links.filter(l => l.id !== link.id)
         if (newLinks.length < links.length) {
-            updateLinks(newLinks)
+            updateList(newLinks)
             setLinks(newLinks)
         }
     }

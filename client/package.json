@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
+    "@types/react-mentions": "^4.1.6",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.6.1",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^1.10.1",
+    "@emotion/styled": "^11.9.3",
     "@mantine/core": "^4.2.10",
     "@mantine/dates": "^4.2.10",
     "@mantine/dropzone": "^4.2.10",
@@ -38,6 +40,7 @@
     "dayjs": "^1.11.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-mentions": "^4.4.4",
     "react-query": "^3.39.1",
     "tabler-icons-react": "^1.50.0"
   }

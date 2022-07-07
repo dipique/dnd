@@ -1,17 +1,17 @@
 import { DbItem } from '../db/Faunadb'
 
-export interface SessionEvent {
-    locations: string[]
-    people: string[]
-    description: string
-    details: string
-}
+// export interface SessionEvent {
+//     location: string
+//     people: string[]
+//     description: string
+//     details: string
+// }
 
 export class Session extends DbItem  {
     type: SessionTypeKey = DefaultSessionType
     date?: Date
     startLocation: string = ''
-    events: SessionEvent[] = []   
+    // events: SessionEvent[] = []
     summary: string = ''
     
     notes?: string = ''

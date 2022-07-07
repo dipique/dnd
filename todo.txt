@@ -1,20 +1,61 @@
 
-
-
 Todo
+    create favicon
+    build a separate session ui--maybe make an active session drawer?
+    Add date for Session, add session to encounter
+    Create component to modify an array of something; maybe use Links as a starting point?
+    Figure out a way to have a list of collections
+        Or at least generate navbar pages from collection info
+
+    change required to attribute
+    make type filter generic
+    decorate entities so that links can be easily identified
     Person validation
     Abstract out api calls/auth
-    Typescript api (just start from scratch)
+    When changing player type, clear combatant fields when needed and disable player field if not PC
+    tooltip about character type keyboard shortcut
+    popover about shortcuts in general
+    shrink form width to fit actual contents
+    class/subclass dropdowns
+    ability to look up spells, etc
+    warn when changing person types of fields that will be cleared
+    fix all the spaces/tabs - just pick one. I think 4.
+    restrict who signs up
+    what if a location gets deleted that something else references?
+        We should probably save the display name with the link so it's not totally useless
+    Add created/modified datestamps/users
+    Add encounter section
+    Move entity configuring into hooks
+    Use class/prototype to construct collection configuration as much of the logic is identical
+    Add journal/event section
+    Stop sending empty fields back and forth
+    Integrate image, maybe add caption as a universal field
+        https://mantine.dev/others/dropzone/
+    Restructure so that entities from client can be shared with api (like Person/Place)
+    FIgure out how to make associate types type-safe
+    Would a drawer be better for the form?
+        https://mantine.dev/core/drawer/
+    Add pagination to tables
+        https://mantine.dev/core/pagination/
 
-
-
-
-
-
+Bugs
+    If you use add person button, first field isn't focused
+    Too many links exand the form until it's bigger than the page
 
 
 Try
+    https://www.dnd5eapi.co/docs/#overview--introduction
+        but also, back up data in case the data is ever gone
+        https://github.com/5e-bits/5e-database/tree/main/src
     typed object.entries
         https://dev.to/harry0000/a-bit-convenient-typescript-type-definitions-for-objectentries-d6g
         https://stackoverflow.com/questions/60141960/typescript-key-value-relation-preserving-object-entries-type
     Can the pages be abstracted? There shoul be a lot of similar code
+    Nextjs
+    Nextauth
+
+References
+    https://tabler-icons-react.vercel.app/
+
+https://xoyondo.com/dp/5YOxiPMT4QGm6Tk
+https://xoyondo.com/dp/5YOxiPMT4QGm6Tk/MjjEOwS9fA
