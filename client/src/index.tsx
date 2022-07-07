@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { Auth0Provider } from '@auth0/auth0-react'
-import { App } from './App'
+import { AppWrapper } from './AppWrapper'
 import { AuthWrapper } from './AuthWrapper'
 import { DbWrapper } from './DbWrapper'
 import { QueryClient, QueryClientProvider } from 'react-query'
@@ -20,7 +20,7 @@ createRoot(
         <AuthWrapper>
             <QueryClientProvider client={queryClient}>
                 <DbWrapper>
-                    <App />
+                    <AppWrapper />
                 </DbWrapper>
             </QueryClientProvider>
         </AuthWrapper>
