@@ -9,6 +9,7 @@ export interface ICollection {
     singular    : string
     icon        : JSX.Element
     types       : ItemTypes
+    defType     : string
     dbStatus?   : string
     dbFetching? : boolean
     getNew      : () => DbItem
@@ -34,6 +35,7 @@ export class ItemCollection<T extends DbItem>
     singular    : string
     icon        : JSX.Element
     types       : ItemTypes
+    defType     : string
     getNew      : () => T
     formGrpCfg  : FormGroupCfg<T>
     tblColumns     : ItemTableColumnDef<T>[]
@@ -43,19 +45,20 @@ export class ItemCollection<T extends DbItem>
     dbFetching  : boolean
     useDb       : () => IDbActions<T>
 
-    getId       : (item: T)              => string = (item) => `${item.type}_${item.name}`
-    getTitle    : (item: T)              => string = (p: T) => `${this.types[p.type].short}: ${p.name}`
-    getType     : (item: T)              => IItemType = item => this.types[item.type]
-    applyFilter : (item: T, filter: any) => boolean = (p, filter) => !filter?.type || p.type === filter.type
+    getId       : (item?: T)              => string    = i => i ? `${i.type}_${i.name}` : ''
+    getTitle    : (item?: T)              => string    = i => i ? `${this.types[i.type].short}: ${i.name}` : '[unknown]'
+    getType     : (item?: T)              => IItemType = i => this.types[i?.type || this.defType]
+    applyFilter : (item : T, filter: any) => boolean   = (i, filter) => !filter?.type || i.type === filter.type
 
     constructor(props: ItemCollectionProps<T>, qryResult: UseQueryResult<T[], unknown>) {
         this.name       = props.name
         this.singular   = props.singular
         this.icon       = props.icon
         this.types      = props.types
+        this.defType    = props.defType
         this.getNew     = props.getNew
         this.formGrpCfg = props.formGrpCfg
-        this.tblColumns    = props.tblColumns
+        this.tblColumns = props.tblColumns
         this.renderForm = props.renderForm
         this.items      = qryResult.data || []
         this.dbStatus   = qryResult.status

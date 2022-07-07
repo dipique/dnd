@@ -1,6 +1,11 @@
 import { createRoot } from 'react-dom/client'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { App } from './App'
+import { AuthWrapper } from './AuthWrapper'
+import { DbWrapper } from './DbWrapper'
+import { QueryClient, QueryClientProvider } from 'react-query'
+
+const queryClient = new QueryClient()
 
 createRoot(
     document.getElementById('app-root')!
@@ -12,7 +17,13 @@ createRoot(
         audience='dnd-api'
         scope='do:all'
     >
-        <App />
+        <AuthWrapper>
+            <QueryClientProvider client={queryClient}>
+                <DbWrapper>
+                    <App />
+                </DbWrapper>
+            </QueryClientProvider>
+        </AuthWrapper>
     </Auth0Provider>
 )
 

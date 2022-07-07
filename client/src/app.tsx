@@ -9,23 +9,18 @@ import { UIWrapper } from './UIWrapper'
 import { DbContext, DbWrapper } from './DbWrapper'
 import { Encounter, Person, Place, Session } from './entities'
 import { AppPage } from './pages/AppPage'
+import { AuthContext } from './AuthWrapper'
 
 export interface IAppContext {
     activePage: string
     setActivePage: (s: string) => void
-    isAuthenticated: boolean
-    logout: (o?: LogoutOptions) => void,
-    loginWithRedirect: (o?: RedirectLoginOptions) => void
 }
 
 export const AppContext = createContext<IAppContext>({} as IAppContext)
-const queryClient = new QueryClient()
 
 export const App = () => {
-    const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
+    const { isAuthenticated } = useContext(AuthContext)
     const [ activePage, setActivePage ] = useState('people')
-    
-    // const isAuthenticated = true  // makes things load quick during development
 
     const ActivePage = () => {
         if (!isAuthenticated)
@@ -42,22 +37,10 @@ export const App = () => {
 
     return <>
         <AppContext.Provider
-            value={{  activePage, setActivePage,
-                      isAuthenticated,
-                      logout, loginWithRedirect    }}
+            value={{  activePage, setActivePage }}
         >
             <UIWrapper>
-                <QueryClientProvider client={queryClient}>
-                    <DbWrapper>
-                        <AppShell
-                            padding="md"
-                            navbar={<AppNavbar />}
-                            header={<AppHeader />}
-                        >
-                            <ActivePage />
-                        </AppShell>
-                    </DbWrapper>
-                </QueryClientProvider>
+                <ActivePage />
             </UIWrapper>
         </AppContext.Provider>
     </>

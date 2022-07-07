@@ -9,7 +9,7 @@ import {
     Person, PersonTypes,
     Place,  PlaceTypes,
     Encounter, EncounterTypes,
-    Session, SessionTypes, ICollection,
+    Session, SessionTypes, ICollection, DefaultPlaceType, DefaultEncounterType, DefaultSessionType, DefaultPersonType,
 } from './entities'
 import {
     PlaceForm, PlaceFormGrpCfg,
@@ -59,6 +59,7 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Person(),
         icon: <MoodBoy />,
         types: PersonTypes,
+        defType: DefaultPersonType,
         formGrpCfg: PersonFormGrpCfg,
         tblColumns: [ { name: 'race' } ],
         renderForm: PersonForm,
@@ -71,10 +72,11 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Place(),
         icon: <Location />,
         types: PlaceTypes,
+        defType: DefaultPlaceType,
         formGrpCfg: PlaceFormGrpCfg,
         tblColumns: [ {
             name: 'location',
-            value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
+            value: (p, col, ctx) => p?.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
         } ],
         renderForm: PlaceForm,
     }, plQry), [plQry])
@@ -86,10 +88,11 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Encounter(),
         icon: <Swords />,
         types: EncounterTypes,
+        defType: DefaultEncounterType,
         formGrpCfg: EncounterFormGrpCfg,
         tblColumns: [ {
             name: 'location',
-            value: (p, col, ctx) => p.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item!) : '',
+            value: (p, col, ctx) => p?.location ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.location)?.item) : '',
         } ],
         renderForm: EncounterForm,
     }, enQry), [enQry])
@@ -101,10 +104,11 @@ export const DbWrapper = (props: any) => {
         getNew: () => new Session(),
         icon: <CalendarEvent />,
         types: SessionTypes,
+        defType: DefaultSessionType,
         formGrpCfg: SessionFormGrpCfg,
         tblColumns: [ {
             name: 'location',
-            value: (p, col, ctx) => p.startLocation ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.startLocation)?.item!) : '',
+            value: (p, col, ctx) => p?.startLocation ? ctx.placesCol.getTitle(ctx.findItemById<Place>(p.startLocation)?.item!) : '',
         } ],
         renderForm: SessionForm,
     }, sesQry), [sesQry])
@@ -122,8 +126,14 @@ export const DbWrapper = (props: any) => {
         }
     , [peopleCol, placesCol, encountersCol])
 
-    return <DbContext.Provider
-        value={{ peopleCol, placesCol, encountersCol, sessionsCol, cols: [peopleCol, placesCol, encountersCol, sessionsCol], findItemById }}
-        children={props.children}
-    />
+    return <>
+        <DbContext.Provider
+            value={{
+                peopleCol, placesCol, encountersCol, sessionsCol,
+                cols: [peopleCol, placesCol, encountersCol, sessionsCol],
+                findItemById
+            }}
+            children={props.children}
+        />
+    </>
 }
