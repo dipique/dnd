@@ -34,7 +34,7 @@ export const ItemTable = <T extends DbItem>({
     const ths = <tr>
           <th>type</th>
           <th>name</th>
-          {collection.columns.map(c => <th key={c.name}>{c.header || c.name}</th>)}
+          {collection.tblColumns.map(c => <th key={c.name}>{c.header || c.name}</th>)}
           <th></th>
         </tr>
 
@@ -42,7 +42,7 @@ export const ItemTable = <T extends DbItem>({
         <tr key={item.id}>
             <td>{collection.getType(item).short}</td>
             <td><Anchor onClick={() => onItemClick?.(item.id)}>{item.name}</Anchor></td>
-            {collection.columns.map(c => <td key={c.name}>{c.value ? c.value(item, collection, ctx) : (item as any)[c.name]}</td>)}
+            {collection.tblColumns.map(c => <td key={c.name}>{c.value ? c.value(item, collection, ctx) : (item as any)[c.name]}</td>)}
             <td width={32}>
                 <ActionIcon onClick={() => deleteItem?.(item.id)} color='red'>
                     <SquareX />

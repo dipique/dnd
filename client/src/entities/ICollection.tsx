@@ -5,10 +5,13 @@ import { FormGroupCfg, ItemFormProps, ItemTableColumnDef } from '../forms'
 import { IItemType, ItemTypes } from './ItemTypes'
 
 export interface ICollection {
-    name: string
-    singular: string
-    icon: JSX.Element,
-    types: ItemTypes
+    name        : string
+    singular    : string
+    icon        : JSX.Element
+    types       : ItemTypes
+    dbStatus?   : string
+    dbFetching? : boolean
+    getNew      : () => DbItem
 }
 
 export interface RequiredItemCollectionProps<T extends DbItem> extends ICollection {
@@ -18,7 +21,7 @@ export interface RequiredItemCollectionProps<T extends DbItem> extends ICollecti
     types       : ItemTypes
     getNew      : () => T
     formGrpCfg  : FormGroupCfg<T>
-    columns     : ItemTableColumnDef<T>[]
+    tblColumns  : ItemTableColumnDef<T>[]
     renderForm  : FC<ItemFormProps<T>>
 }
 
@@ -33,7 +36,7 @@ export class ItemCollection<T extends DbItem>
     types       : ItemTypes
     getNew      : () => T
     formGrpCfg  : FormGroupCfg<T>
-    columns     : ItemTableColumnDef<T>[]
+    tblColumns     : ItemTableColumnDef<T>[]
     renderForm  : FC<ItemFormProps<T>>
     items       : T[]
     dbStatus    : string
@@ -52,7 +55,7 @@ export class ItemCollection<T extends DbItem>
         this.types      = props.types
         this.getNew     = props.getNew
         this.formGrpCfg = props.formGrpCfg
-        this.columns    = props.columns
+        this.tblColumns    = props.tblColumns
         this.renderForm = props.renderForm
         this.items      = qryResult.data || []
         this.dbStatus   = qryResult.status
