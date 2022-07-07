@@ -12,7 +12,7 @@ export interface IAppContext {
 
 export const AppContext = createContext<IAppContext>({} as IAppContext)
 
-export const AppWrapper = () => {
+export const App = () => {
     const { isAuthenticated } = useContext(AuthContext)
     const { cols } = useContext(DbContext)
     

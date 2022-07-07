@@ -1,6 +1,6 @@
 import { ActionIcon, Navbar, Title } from '@mantine/core'
 import { FC, useContext, useState } from 'react'
-import { AppContext } from './AppWrapper'
+import { AppContext } from './App'
 import { DbContext } from './DbWrapper'
 
 const hoverHighlight = 'rgba(147, 147, 147, 0.1)'

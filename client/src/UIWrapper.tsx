@@ -6,7 +6,7 @@ import { SpotlightProvider, SpotlightAction } from '@mantine/spotlight'
 import { NotificationsProvider } from '@mantine/notifications'
 import { getActions, slIconSize } from './SpotlightActions'
 
-import { AppContext } from './AppWrapper'
+import { AppContext } from './App'
 import { AuthContext } from './AuthWrapper'
 import { AppNavbar } from './AppNavbar'
 import { AppHeader } from './AppHeader'
