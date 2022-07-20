@@ -36,5 +36,5 @@ const port = Number(process.env.PORT) || 8000
 app.set('port', port)
 const server = http.createServer(app)
 server.listen(port, () => {
-   console.log(`server started on port ${process.env.PORT}`)
+   console.log(`server started on port ${process.env.PORT || 8000}`)
 })
