@@ -1,0 +1,23 @@
+# firewall
+(sudo)
+ufw enable # if not already enabled
+ufw allow 8000/tcp
+ufw allow 3000/tcp
+ufw status verbose # to see results
+
+
+# node
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install nodejs
+node -v # to validate version
+
+# if node will not install because of a conflict:
+cd /etc/apt/sources.list.d 
+sudo rm nodesource.list
+sudo apt --fix-broken install
+sudo apt remove nodejs
+sudo apt remove nodejs-doc
+sudo apt autoremove
+sudo apt update
+
+# then try using the node installation commands again
